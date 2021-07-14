@@ -9,7 +9,7 @@ import React, {
   useEffect,
 } from "react";
 import { ContextMessage } from "../service-message";
-import { useAppContext } from "../context";
+import { useNetworkContext } from "../network";
 
 const defaultContext: ContextValue = [
   machine.initialState,
@@ -19,8 +19,9 @@ const defaultContext: ContextValue = [
 export const context = createContext(defaultContext);
 export const useAuthContext = () => useContext(context);
 export const AuthProvider: FunctionComponent = ({ children }) => {
-  const { websocketClient, sendWebSocket } = useAppContext();
+  const [netState, netSend] = useNetworkContext();
   const [state, send] = useMachine(machine);
+  const ws = netState.context.ws;
 
   // Loading Context
   useEffect(() => {
@@ -29,8 +30,8 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 
   // Reconnecting Websocket
   useEffect(() => {
-    if (!websocketClient && state.context.user) sendWebSocket("connect");
-    if (websocketClient && !state.context.user) sendWebSocket("disconnect");
+    if (!ws && state.context.user) netSend("ConnectWebSocket");
+    if (ws && !state.context.user) netSend("DisconnectWebSocket");
   }, [state.context.user]);
 
   // Subscription

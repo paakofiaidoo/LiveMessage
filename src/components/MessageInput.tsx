@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
-import { MessageMessage } from "../store/service-message";
-import { useMessageContext } from "../store/message";
+import { MessageMessage } from "../services/service-message";
+import { useMessageContext } from "../services/message";
 
 const MessageInput: FunctionComponent = () => {
   const [{ context }, send] = useMessageContext();

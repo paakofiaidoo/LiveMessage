@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect } from "react";
 import { Link, useLocation, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
-import { useUserContext } from "../store/user";
+import { useUserContext } from "../services/user";
 import Avatar from "./Avatar";
 
 interface IRoute {

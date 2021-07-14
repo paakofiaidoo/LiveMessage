@@ -1,13 +1,10 @@
 import { ActionFunctionMap, AnyEventObject, State } from "xstate";
 import { Send } from "../shared-actions";
-import { User } from "../../types";
+import { SubscriptionClient } from "subscriptions-transport-ws";
 
 export interface Context {
-  users: User[];
-  userFetchError: string | null;
-
-  userList: Record<string, User>;
+  ws: SubscriptionClient | undefined;
 }
 
 export type Action = ActionFunctionMap<Context, AnyEventObject>;
-export type UserContextValue = [State<Context>, Send<Context>];
+export type ContextValue = [State<Context>, Send<Context>];

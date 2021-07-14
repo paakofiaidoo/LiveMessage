@@ -1,5 +1,4 @@
 import { useMachine } from "@xstate/react";
-import { useAuthContext } from "../auth";
 import { UserContextValue } from "./types";
 import { createSend } from "../shared-actions";
 import { machine, initialContext } from "./machine";
@@ -14,7 +13,7 @@ import React, {
   useEffect,
 } from "react";
 import { ContextMessage } from "../service-message";
-import { useAppContext } from "../context";
+import { useNetworkContext } from "../network";
 
 // User Context
 const defaultContext: UserContextValue = [
@@ -26,28 +25,20 @@ export const context = createContext(defaultContext);
 export const useUserContext = () => useContext(context);
 export const UserProvider: FunctionComponent = ({ children }) => {
   const [state, send] = useMachine(machine);
-  const [authState] = useAuthContext();
-  const { websocketClient } = useAppContext();
+  const [netState] = useNetworkContext();
+  const ws = netState.context.ws;
 
   // Loading Context
   useEffect(() => {
     send(ContextMessage.LoadContext);
   }, []);
 
-  // Subscription
-  // useEffect(() => {
-  //   if (authState.context.user) {
-  //     subscribeToUserOnline(send);
-  //     subscribeToUserOffline(send);
-  //   }
-  // }, [authState.context.user]);
-
   useEffect(() => {
-    if (websocketClient) {
-      subscribeToUserOnline(websocketClient, send);
-      subscribeToUserOffline(websocketClient, send);
+    if (ws) {
+      subscribeToUserOnline(ws, send);
+      subscribeToUserOffline(ws, send);
     }
-  }, [websocketClient]);
+  }, [ws]);
 
   return <context.Provider value={[state, send]}>{children}</context.Provider>;
 };

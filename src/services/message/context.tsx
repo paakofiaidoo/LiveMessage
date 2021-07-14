@@ -11,7 +11,7 @@ import React, {
   useEffect,
 } from "react";
 import { ContextMessage } from "../service-message";
-import { useAppContext } from "../context";
+import { useNetworkContext } from "../network";
 
 // User Context
 const defaultContext: ContextValue = [
@@ -24,25 +24,17 @@ export const useMessageContext = () => useContext(context);
 export const MessageProvider: FunctionComponent = ({ children }) => {
   const [state, send] = useMachine(machine);
   const [authState] = useAuthContext();
-  const { websocketClient } = useAppContext();
+  const [netState] = useNetworkContext();
 
   // Loading Context
   useEffect(() => {
     send(ContextMessage.LoadContext);
   }, []);
 
-  // Subscriptions
-  // useEffect(() => {
-  //   // Subcribe for messages
-  //   if (authState.context.user) {
-  //     subscribe(authState.context.user.id, send);
-  //   }
-  // }, [authState.context.user]);
-
   useEffect(() => {
     // Subcribe for messages
-    if (websocketClient && authState.context.user) {
-      subscribe(websocketClient, authState.context.user.id, send);
+    if (netState.context.ws && authState.context.user) {
+      subscribe(netState.context.ws, authState.context.user.id, send);
     }
   }, [authState.context.user]);
 

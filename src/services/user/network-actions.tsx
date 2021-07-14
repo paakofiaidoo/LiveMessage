@@ -39,29 +39,14 @@ export const subscribeToUserOnline = (
   send: Send<Context>
 ) => {
   const observer = {
-    // next: ({ data: { userOnline } }: any) => {
-    next: (data: any) => {
-      console.log("Online: ", data);
-      // send("UserOnline", { data: userOnline });
+    next: ({ data: { userOnline } }: any) => {
+      userOnline && send("UserOnline", { user: userOnline });
     },
-    error: (e: any) => console.log("[Message] Bad Sub: ", e),
+    error: (e: any) => console.log("[User] Bad Sub: ", e),
     complete: () => console.log("Complete Sub"),
   };
 
   return client.request({ query: USER_ONLINE_SUB }).subscribe(observer);
-
-  // const observable = client.subscribe({ query: USER_ONLINE_SUB });
-
-  // observable.subscribe(
-  //   // On Message
-  //   ({ data: { userOnline } }) => send("UserOnline", { user: userOnline }),
-
-  //   // On Error
-  //   (e) => console.log("Bad Sub: ", e),
-
-  //   // On Complete
-  //   () => console.log("Complete Sub")
-  // );
 };
 
 export const subscribeToUserOffline = (
@@ -69,30 +54,12 @@ export const subscribeToUserOffline = (
   send: Send<Context>
 ) => {
   const observer = {
-    // next: ({ data: { userOffline } }: any) => {
-    next: (data: any) => {
-      console.log("Offline: ", data);
-
-      // send("UserOnline", { data: userOffline });
+    next: ({ data: { userOffline } }: any) => {
+      userOffline && send("UserOffline", { user: userOffline });
     },
-    error: (e: any) => console.log("[Message] Bad Sub: ", e),
+    error: (e: any) => console.log("[User] Bad Sub: ", e),
     complete: () => console.log("Complete Sub"),
   };
 
   return client.request({ query: USER_OFFLINE_SUB }).subscribe(observer);
-  // const observable = client.subscribe({ query: USER_OFFLINE_SUB });
-
-  // observable.subscribe(
-  //   // On Message
-  //   ({ data: { userOffline } }) => {
-  //     send("UserOffline", { user: userOffline });
-  //     console.log("Incoming userOffline: ", userOffline);
-  //   },
-
-  //   // On Error
-  //   (e) => console.log("Bad Sub: ", e),
-
-  //   // On Complete
-  //   () => console.log("Complete Sub")
-  // );
 };

@@ -12,8 +12,6 @@ export const actions: Action = {
   updateUserFetchError: assign({ userFetchError: (_, e: any) => e.data }),
   setToOnline: assign({
     userList: ({ userList }, e) => {
-      console.log("Online: ", e.user);
-
       const user = userList[e.user.id] || e.user;
       user.status = "Online";
       return { ...userList, [user.id]: user };
