@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect } from "react";
 import { Link, useLocation, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
-import { useUserContext } from "../store/user-store";
+import { useUserContext } from "../store/user";
 import Avatar from "./Avatar";
 
 interface IRoute {
@@ -14,6 +14,7 @@ const UserList: FunctionComponent = () => {
   let { url }: IRoute = useRouteMatch();
   const { pathname } = useLocation();
   const [{ context }, send] = useUserContext();
+  const userList = Object.values(context.userList);
 
   useEffect(() => {
     send("FETCH_USERS");
@@ -21,7 +22,7 @@ const UserList: FunctionComponent = () => {
 
   return (
     <Wrapper className="UserList">
-      {context.users.map((user, key) => {
+      {userList.map((user, key) => {
         const to = url + user.id;
 
         return (
@@ -38,6 +39,7 @@ const UserList: FunctionComponent = () => {
             <h2>
               {user.name}
               <span>{user.email}</span>
+              <span className="status">{user.status}</span>
             </h2>
           </Link>
         );
@@ -81,5 +83,10 @@ const Wrapper = styled.nav`
     font-size: 1.2rem;
     font-weight: normal;
     color: var(--color-grey-light);
+  }
+
+  .status {
+    font-size: 1rem;
+    color: var(--color-tertiary);
   }
 `;

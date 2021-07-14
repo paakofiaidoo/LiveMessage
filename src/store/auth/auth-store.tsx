@@ -8,15 +8,15 @@ import { gql } from "@apollo/client";
 import { useMachine } from "@xstate/react";
 import { createMachine, assign, State } from "xstate";
 import jwt from "jsonwebtoken";
-import { User } from "../types";
-import { AUTH_TOKEN_KEY, createApolloClient } from "../utils/apollo";
-import { AuthMessage, ContextMessage } from "./message";
+import { User } from "../../types";
+import { AUTH_TOKEN_KEY, createApolloClient } from "../../utils/apollo-old";
+import { AuthMessage, ContextMessage } from "../service-message";
 import {
   createLoadContext,
   createPersist,
   createSend,
   Send,
-} from "./shared-actions";
+} from "../shared-actions";
 
 interface Context {
   user: User | null;

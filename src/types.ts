@@ -3,6 +3,7 @@ export interface User {
   name: string;
   email: string;
   image: string;
+  status: "Online" | "Offline";
 }
 
 export interface Message {

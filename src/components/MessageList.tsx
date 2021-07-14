@@ -1,12 +1,11 @@
 import React, { FunctionComponent, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { useMessageContext } from "../store/message-store";
-import { useAuthContext } from "../store/auth-store";
-
+import { useMessageContext } from "../store/message";
+import { useAuthContext } from "../store/auth";
 import MessageCard from "./MessageCard";
 import MessageInput from "./MessageInput";
-import { MessageMessage } from "../store/message";
+import { MessageMessage } from "../store/service-message";
 
 interface Params {
   id: string;

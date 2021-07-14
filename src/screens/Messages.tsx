@@ -3,8 +3,9 @@ import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import UserList from "../components/UserList";
 import MessageList from "../components/MessageList";
-import { useAuthContext } from "../store/auth-store";
-import { AuthMessage } from "../store/message";
+import { useAuthContext } from "../store/auth";
+import { AuthMessage } from "../store/service-message";
+
 
 const Messages: FunctionComponent = () => {
   const { path } = useRouteMatch();

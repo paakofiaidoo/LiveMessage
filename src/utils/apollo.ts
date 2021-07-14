@@ -1,72 +1,43 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  createHttpLink,
-  split,
-} from "@apollo/client";
+import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { WebSocketLink } from "@apollo/client/link/ws";
-import { getMainDefinition } from "@apollo/client/utilities";
+import { SubscriptionClient } from "subscriptions-transport-ws";
 
 export const AUTH_TOKEN_KEY = `bm8za`;
 const URL = `http://localhost:4000`;
 const WS_URL = `ws://localhost:4000/subscriptions`;
 
-const httpLink = createHttpLink({
-  uri: URL,
-  credentials: "same-origin",
-});
-
-const authLink = setContext((_, { headers }) => {
-  // get the authentication token from local storage if it exists
-  const token = localStorage.getItem(AUTH_TOKEN_KEY);
-
-  // return the headers to the context so httpLink can read them
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `${token}` : "",
-    },
-  };
-});
-
-/** Link for websocket */
-const wsLink = new WebSocketLink({
-  uri: WS_URL,
-  options: {
+/** WebSocket Client */
+export const createWebSocketClient = () => {
+  return new SubscriptionClient(WS_URL, {
     reconnect: true,
     connectionParams: {
       authorization: localStorage.getItem(AUTH_TOKEN_KEY) || "",
     },
-  },
-});
+  });
+};
 
-/** A split for http and websocket */
-const splitLink = split(
-  ({ query }) => {
-    const definition = getMainDefinition(query);
-    return (
-      definition.kind === "OperationDefinition" &&
-      definition.operation === "subscription"
-    );
-  },
-  wsLink,
-  authLink.concat(httpLink)
-);
+/** Apollo HTTP Link */
+const createHTTPLink = () => {
+  return setContext((_, { headers }) => {
+    // get the authentication token from local storage if it exists
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
 
-interface Options {
-  protocol?: "http" | "websocket" | "split";
-}
+    // return the headers to the context so httpLink can read them
+    return {
+      headers: { ...headers, authorization: token ? `${token}` : "" },
+    };
+  }).concat(
+    createHttpLink({
+      uri: URL,
+      credentials: "same-origin",
+    })
+  );
+};
 
-export const createApolloClient = (options: Options = { protocol: "http" }) => {
-  let link = authLink.concat(httpLink);
-
-  if (options.protocol === "split") link = splitLink;
-  if (options.protocol === "websocket") link = wsLink;
-  if (options.protocol === "http") link = authLink.concat(httpLink);
-
+/** Apollo HTTP Client */
+export const createApolloClient = () => {
   return new ApolloClient({
-    link,
+    link: createHTTPLink(),
     cache: new InMemoryCache(),
     ssrMode: typeof window === "undefined",
   });

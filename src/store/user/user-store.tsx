@@ -7,15 +7,15 @@ import React, {
   useEffect,
 } from "react";
 import { createMachine, assign, State } from "xstate";
-import { User } from "../types";
-import { createApolloClient } from "../utils/apollo";
-import { useAuthContext } from "./auth-store";
+import { User } from "../../types";
+import { createApolloClient } from "../../utils/apollo-old";
+import { useAuthContext } from "../auth/auth-store";
 import {
   createLoadContext,
   createPersist,
   createSend,
   Send,
-} from "./shared-actions";
+} from "../shared-actions";
 
 interface Context {
   users: User[];

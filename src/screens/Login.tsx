@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
 import { GoogleLogin } from "react-google-login";
-import { useAuthContext } from "../store/auth-store";
-import { AuthMessage } from "../store/message";
+import { useAuthContext } from "../store/auth";
+import { AuthMessage } from "../store/service-message";
 import { Redirect } from "react-router-dom";
 
 const GOOGLE_ID =
