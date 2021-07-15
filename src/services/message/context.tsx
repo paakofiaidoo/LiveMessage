@@ -25,6 +25,8 @@ export const MessageProvider: FunctionComponent = ({ children }) => {
   const [state, send] = useMachine(machine);
   const [authState] = useAuthContext();
   const [netState] = useNetworkContext();
+  const ws = netState.context.ws;
+  const user = authState.context.user;
 
   // Loading Context
   useEffect(() => {
@@ -33,10 +35,8 @@ export const MessageProvider: FunctionComponent = ({ children }) => {
 
   useEffect(() => {
     // Subcribe for messages
-    if (netState.context.ws && authState.context.user) {
-      subscribe(netState.context.ws, authState.context.user.id, send);
-    }
-  }, [authState.context.user]);
+    ws && user && subscribe(ws, user.id, send);
+  }, [ws]);
 
   return <context.Provider value={[state, send]}>{children}</context.Provider>;
 };

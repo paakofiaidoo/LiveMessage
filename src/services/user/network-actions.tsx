@@ -1,4 +1,3 @@
-import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import { User } from "../../types";
 import { createApolloClient } from "../../utils/apollo";
@@ -15,16 +14,7 @@ export const findUsers = async () => {
 
     // Convert to User
     const users: Record<string, User> = data.users.reduce(
-      (acc: Record<string, User>, cur: any) => ({
-        ...acc,
-        [cur.id]: {
-          id: cur.id,
-          name: cur.name,
-          email: cur.email,
-          image: cur.image,
-          status: "Offline",
-        },
-      }),
+      (acc: Record<string, User>, cur: any) => ({ ...acc, [cur.id]: cur }),
       {}
     );
 
@@ -39,7 +29,8 @@ export const subscribeToUserOnline = (
   send: Send<Context>
 ) => {
   const observer = {
-    next: ({ data: { userOnline } }: any) => {
+    next: (result: any) => {
+      const userOnline = result && result.data && result.data.userOnline;
       userOnline && send("UserOnline", { user: userOnline });
     },
     error: (e: any) => console.log("[User] Bad Sub: ", e),
@@ -54,7 +45,8 @@ export const subscribeToUserOffline = (
   send: Send<Context>
 ) => {
   const observer = {
-    next: ({ data: { userOffline } }: any) => {
+    next: (result: any) => {
+      const userOffline = result && result.data && result.data.userOffline;
       userOffline && send("UserOffline", { user: userOffline });
     },
     error: (e: any) => console.log("[User] Bad Sub: ", e),

@@ -11,17 +11,9 @@ export const actions: Action = {
   updateUsers: assign({ userList: (_, e: any) => e.data }),
   updateUserFetchError: assign({ userFetchError: (_, e: any) => e.data }),
   setToOnline: assign({
-    userList: ({ userList }, e) => {
-      const user = userList[e.user.id] || e.user;
-      user.status = "Online";
-      return { ...userList, [user.id]: user };
-    },
+    userList: ({ userList }, e) => ({ ...userList, [e.user.id]: e.user }),
   }),
   setToOffline: assign({
-    userList: ({ userList }, e) => {
-      const user = userList[e.user.id] || e.user;
-      user.status = "Offline";
-      return { ...userList, [user.id]: user };
-    },
+    userList: ({ userList }, e) => ({ ...userList, [e.user.id]: e.user }),
   }),
 };

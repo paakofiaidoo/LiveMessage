@@ -3,7 +3,8 @@ export interface User {
   name: string;
   email: string;
   image: string;
-  status: "Online" | "Offline";
+  status: "online" | "offline";
+  blockList: string[];
 }
 
 export interface Message {

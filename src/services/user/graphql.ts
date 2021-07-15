@@ -7,6 +7,8 @@ export const USERS = gql`
       name
       email
       image
+      status
+      blockList
     }
   }
 `;
@@ -18,6 +20,8 @@ export const USER_ONLINE_SUB = gql`
       name
       email
       image
+      status
+      blockList
     }
   }
 `;
@@ -29,6 +33,8 @@ export const USER_OFFLINE_SUB = gql`
       name
       email
       image
+      status
+      blockList
     }
   }
 `;
