@@ -1,6 +1,7 @@
 {
-  "name": "chat-app",
-  "version": "0.1.0",
+  "name": "live-message",
+  "version": "0.0.1",
+  "description": "LiveMessage",
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.20",

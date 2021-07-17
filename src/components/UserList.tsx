@@ -1,49 +1,29 @@
 import React, { FunctionComponent, useEffect } from "react";
-import { Link, useLocation, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
+import { useAuthContext } from "../services/auth";
 import { useUserContext } from "../services/user";
-import Avatar from "./Avatar";
-
-interface IRoute {
-  path: string;
-  url: string;
-  params: { id: string };
-}
+import UserCard from "./UserCard";
 
 const UserList: FunctionComponent = () => {
-  let { url }: IRoute = useRouteMatch();
-  const { pathname } = useLocation();
   const [{ context }, send] = useUserContext();
-  const userList = Object.values(context.userList);
+  const [authState] = useAuthContext();
+  const appUser = authState.context.user;
+  const userList = Object.values(context.users);
 
   useEffect(() => {
-    send("FETCH_USERS");
+    send("FetchUsers");
   }, []);
 
   return (
     <Wrapper className="UserList">
-      {userList.map((user, key) => {
-        const to = url + user.id;
-
-        return (
-          <Link
-            to={to}
-            key={key}
-            className={`user ${to === pathname ? "selected" : ""}`}
-          >
-            <Avatar
-              className="dp"
-              src={user.image}
-              alt={user.name + "'s profile picture"}
-            />
-            <h2>
-              {user.name}
-              <span>{user.email}</span>
-              <span className="status">{user.status}</span>
-            </h2>
-          </Link>
-        );
-      })}
+      {userList.map((user, key) => (
+        <UserCard
+          key={key}
+          user={user}
+          isMe={(appUser && appUser.id) === user.id}
+          blockUser={() => send("BlockUser", { id: user.id })}
+        />
+      ))}
     </Wrapper>
   );
 };
@@ -55,6 +35,7 @@ const Wrapper = styled.nav`
   height: 100%;
   box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.12);
   flex-shrink: 0;
+  padding: 2rem 0rem;
 
   .user {
     display: flex;

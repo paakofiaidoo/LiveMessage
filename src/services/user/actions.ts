@@ -8,12 +8,28 @@ export const actions: Action = {
   persist: createPersist(STORE_NAME),
   loadContext: createLoadContext(STORE_NAME),
 
-  updateUsers: assign({ userList: (_, e: any) => e.data }),
-  updateUserFetchError: assign({ userFetchError: (_, e: any) => e.data }),
+  /* User */
+  updateUsers: assign({
+    users: (_, e: any) => e.data,
+  }),
+  removeUser: assign({
+    users: (ctx, e) => {
+      if (ctx.users[e.data]) delete ctx.users[e.data];
+      return ctx.users;
+    },
+  }),
   setToOnline: assign({
-    userList: ({ userList }, e) => ({ ...userList, [e.user.id]: e.user }),
+    users: (ctx, e) => {
+      if (e.data) ctx.users[e.data.id] = e.data;
+      return ctx.users;
+    },
   }),
   setToOffline: assign({
-    userList: ({ userList }, e) => ({ ...userList, [e.user.id]: e.user }),
+    users: (ctx, e) => {
+      if (e.data) ctx.users[e.data.id] = e.data;
+      return ctx.users;
+    },
   }),
+  updateUserFetchError: assign({ userFetchError: (_, e: any) => e.data }),
+  updateBlockError: assign({ userBlockError: (_, e: any) => e.data }),
 };

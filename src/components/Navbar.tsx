@@ -5,7 +5,7 @@ import styled from "styled-components";
 const Navbar: FunctionComponent = () => {
   return (
     <Wrapper className="Navbar">
-      <div className="brand">AfroChat</div>
+      <div className="brand">Live Message</div>
       <div className="links">
         <Link to="/">Messages</Link>
         <Link to="/login">Login</Link>

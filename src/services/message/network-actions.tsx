@@ -59,8 +59,9 @@ export const subscribe = (
   send: Send<Context>
 ) => {
   const observer = {
-    next: ({ data: { sentMessage } }: any) => {
-      send(MessageMessage.AttachMessage, { data: sentMessage });
+    next: (result: any) => {
+      const sentMessage = result && result.data && result.data.sentMessage;
+      sentMessage && send(MessageMessage.AttachMessage, { data: sentMessage });
     },
     error: (e: any) => console.log("[Message] Bad Sub: ", e),
     complete: () => console.log("Complete Sub"),

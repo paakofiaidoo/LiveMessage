@@ -1,5 +1,14 @@
 import { gql } from "@apollo/client";
 
+export const BLOCK_USER = gql`
+  mutation BlockUser($id: ID!) {
+    blockUser(id: $id) {
+      blockedBy
+      blockedUser
+    }
+  }
+`;
+
 export const USERS = gql`
   query Users($limit: Int, $skip: Int) {
     users(limit: $limit, skip: $skip) {
@@ -8,7 +17,7 @@ export const USERS = gql`
       email
       image
       status
-      blockList
+      # blockedBy
     }
   }
 `;
@@ -21,7 +30,7 @@ export const USER_ONLINE_SUB = gql`
       email
       image
       status
-      blockList
+      # blockedBy
     }
   }
 `;
@@ -34,7 +43,16 @@ export const USER_OFFLINE_SUB = gql`
       email
       image
       status
-      blockList
+      # blockedBy
+    }
+  }
+`;
+
+export const USER_BLOCKED = gql`
+  subscription UserBlocked($id: ID!) {
+    userBlocked(id: $id) {
+      blockedBy
+      blockedUser
     }
   }
 `;

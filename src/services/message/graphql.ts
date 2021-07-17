@@ -10,12 +10,14 @@ export const SUBSCRIPTION = gql`
         name
         email
         image
+        status
       }
       sentTo {
         id
         name
         email
         image
+        status
       }
       sentAt
     }

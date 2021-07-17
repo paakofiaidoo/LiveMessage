@@ -15,6 +15,8 @@ export const ME = gql`
       name
       email
       image
+      status
+      # blockBy
     }
   }
 `;

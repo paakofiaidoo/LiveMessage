@@ -1,13 +1,13 @@
 import { createMachine } from "xstate";
 import { ContextMessage } from "../service-message";
 import { actions } from "./actions";
-import { findUsers } from "./network-actions";
+import { findUsers, blockUser } from "./network-actions";
 import { Context } from "./types";
 
 export const initialContext: Context = {
-  users: [],
+  users: {},
   userFetchError: null,
-  userList: {},
+  userBlockError: null,
 };
 
 export const machine = createMachine<Context>(
@@ -19,13 +19,13 @@ export const machine = createMachine<Context>(
       fetch: {
         initial: "idle",
         states: {
-          idle: { on: { FETCH_USERS: "fetching" } },
+          idle: { on: { FetchUsers: "fetching" } },
           fetching: {
             id: "getUsers",
             invoke: {
               src: findUsers,
               onDone: {
-                target: "fetchMore",
+                target: "idle",
                 actions: ["updateUsers", "persist"],
               },
               onError: {
@@ -34,16 +34,37 @@ export const machine = createMachine<Context>(
               },
             },
           },
-          rejected: { on: { FETCH_USERS: { target: "fetching" } } },
-          fetchMore: { on: { FETCH_USERS: { target: "fetching" } } },
+          rejected: { on: { FetchUsers: { target: "fetching" } } },
+        },
+      },
+      blockUser: {
+        initial: "idle",
+        states: {
+          idle: { on: { BlockUser: "blocking" } },
+          blocking: {
+            id: "blockUser",
+            invoke: {
+              src: blockUser,
+              onDone: {
+                target: "idle",
+                actions: ["removeUser", "persist"],
+              },
+              onError: {
+                target: "rejected",
+                actions: ["updateBlockError", "persist"],
+              },
+            },
+          },
+          rejected: { on: { BlockUser: { target: "blocking" } } },
         },
       },
     },
 
     on: {
       [ContextMessage.LoadContext]: { actions: "loadContext" },
-      UserOnline: { actions: ["setToOnline"] },
-      UserOffline: { actions: ["setToOffline"] },
+      UserOnline: { actions: ["setToOnline", "persist"] },
+      UserOffline: { actions: ["setToOffline", "persist"] },
+      UserBlocked: { actions: ["removeUser", "persist"] },
     },
   },
   { actions }

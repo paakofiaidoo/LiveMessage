@@ -16,7 +16,7 @@ const Login: FunctionComponent = () => {
 
   return (
     <Wrapper className="Login">
-      <h1>AfroChat </h1>
+      <h1>Live Message </h1>
       <p>Login to start chating</p>
 
       <div className="login-card">
