@@ -3,17 +3,25 @@ import { actions } from "./actions";
 import { Context } from "./types";
 
 export const initialContext: Context = {
+  kernel: undefined,
   ws: undefined,
 };
 
-export const machine = createMachine<Context>(
-  {
-    id: "user",
-    context: initialContext,
-    on: {
-      ConnectWebSocket: { actions: "createWebSocket" },
-      DisconnectWebSocket: { actions: "removeWebSocket" },
+export const createNetworkMachine = () =>
+  createMachine<Context>(
+    {
+      id: "user",
+      context: initialContext,
+      on: {
+        /* Kernel Events */
+        UPDATE: { actions: ["updateKernel"] },
+
+        /* Network Events */
+        ConnectWebSocket: { actions: "createWebSocket" },
+        DisconnectWebSocket: { actions: "removeWebSocket" },
+      },
     },
-  },
-  { actions }
-);
+    { actions }
+  );
+
+export const initialMachine = createNetworkMachine();

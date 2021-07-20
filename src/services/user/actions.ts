@@ -4,6 +4,15 @@ import { STORE_NAME } from "./constants";
 import { Action } from "./types";
 
 export const actions: Action = {
+  /* Kernel Actions */
+  updateKernel: assign({
+    kernel: (_, event) => {
+      console.log("user:updateKernel: ", event.kernel);
+
+      return event.kernel;
+    },
+  }),
+
   /* Context Actions */
   persist: createPersist(STORE_NAME),
   loadContext: createLoadContext(STORE_NAME),

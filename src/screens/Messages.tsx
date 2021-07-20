@@ -1,30 +1,26 @@
 import React, { FunctionComponent } from "react";
-import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import styled from "styled-components";
-import UserList from "../components/UserList";
-import MessageList from "../components/MessageList";
+
 import { useAuthContext } from "../services/auth";
-import { AuthMessage } from "../services/service-message";
+
+import AppBar from "../components/AppBar";
+import UserList from "../components/UserList";
+import ChatList from "../components/ChatList";
 
 const Messages: FunctionComponent = () => {
-  const { path } = useRouteMatch();
-  const [{ context }, send] = useAuthContext();
+  const [{ context }] = useAuthContext();
 
   // Check logged in
   if (!context.user) return <Redirect to="/login" />;
 
   return (
     <Wrapper className="Messages">
-      <UserList />
-      <Switch>
-        <Route path={path} exact>
-          <div className="unselected">
-            <h3>Please Selected a user to chat with</h3>
-            <button onClick={() => send(AuthMessage.Logout)}>Logout</button>
-          </div>
-        </Route>
-        <Route path={`${path}:id`} component={MessageList} exact />
-      </Switch>
+      {/* <AppBar title="Live Messages" /> */}
+      <div className="AppBody">
+        <UserList />
+        <ChatList />
+      </div>
     </Wrapper>
   );
 };
@@ -33,6 +29,14 @@ export default Messages;
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
   height: 100%;
   position: relative;
+  overflow: hidden;
+
+  .AppBody {
+    flex-grow: 1;
+    display: flex;
+    overflow: hidden;
+  }
 `;

@@ -1,14 +1,9 @@
 import React, { FunctionComponent } from "react";
-import { Link, useLocation, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
+import { useChatContext } from "../services/chat";
 import { User } from "../types";
 import Avatar from "./Avatar";
-
-interface IRoute {
-  path: string;
-  url: string;
-  params: { id: string };
-}
+import Svg from "./Svg";
 
 interface Props {
   user: User;
@@ -17,39 +12,68 @@ interface Props {
 }
 
 const UserCard: FunctionComponent<Props> = ({ user, isMe, blockUser }) => {
-  let { url }: IRoute = useRouteMatch();
-  const { pathname } = useLocation();
-  const userLink = url + user.id;
-  const selected = userLink === pathname ? "selected" : "";
+  const [{ context }, send] = useChatContext();
+  const selected = context.selected === user.id ? "selected" : "";
+  const isOnline = user.status === "online";
+  const selectChat = () => send("CHAT.START", { userId: user.id });
 
   return (
     <Wrapper className={`UserCard ${selected}`}>
       <Avatar
-        className="dp"
+        className={`image ${isOnline ? "active" : ""}`}
         src={user.image}
         alt={user.name + "'s profile picture"}
       />
       <h2>
         {user.name}
         <span>{user.email}</span>
-        <span className="status">{user.status}</span>
+        <span role="button" className="status">
+          {user.status}
+        </span>
       </h2>
 
-      <div className="actions">
-        <Link to={userLink}>{isMe ? "My Notes" : "Chat"}</Link>
-        {!isMe && <button onClick={blockUser}>Block</button>}
-      </div>
+      <button
+        onClick={selectChat}
+        title={isMe ? "My Notes" : "Chat"}
+        className="chat-link"
+      >
+        <Svg iconPath="/icons/sprite.svg#chat" />
+      </button>
     </Wrapper>
   );
 };
 
 export default UserCard;
 
-const Wrapper = styled.nav`
+const Wrapper = styled.div`
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   padding: 1.5rem 2rem;
   transition: all 0.5s ease-in-out;
+
+  .image {
+    margin-right: 1rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  span {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: var(--color-grey-light);
+    line-height: 1;
+  }
+
+  .status {
+    font-size: 1rem;
+    color: var(--color-tertiary);
+    cursor: pointer;
+    display: inline-block;
+  }
 
   &:hover {
     background-color: var(--color-tertiary-light);
@@ -63,23 +87,29 @@ const Wrapper = styled.nav`
     }
   }
 
-  .dp {
-    margin-right: 1rem;
-  }
+  .chat-link {
+    display: flex;
+    height: 100%;
+    color: var(--color-primary);
+    margin-left: auto;
 
-  span {
-    display: block;
-    font-size: 1.2rem;
-    font-weight: normal;
-    color: var(--color-grey-light);
-  }
+    display: inline-block;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-tertiary-light);
+    border: none;
+    border-radius: 0.2rem;
 
-  .status {
-    font-size: 1rem;
-    color: var(--color-tertiary);
-  }
+    svg {
+      fill: var(--color-secondary);
+      height: 1.5rem;
+    }
 
-  .actions {
-    width: 100%;
+    &:hover {
+      transform: scale(1.2);
+    }
   }
 `;

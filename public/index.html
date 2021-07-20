@@ -15,6 +15,7 @@
       :root {
         --color-primary: #ffffff;
         --color-secondary: #0b1a24;
+        --color-secondary-5: rgba(11, 26, 36, 0.5);
         --color-tertiary: #067beb;
         --color-tertiary-trans: #067ceb67;
         --color-tertiary-light: #c8d9eb;
@@ -25,6 +26,25 @@
         --spacing-h: 4rem;
       }
 
+      /* Custom Scroll Bar */
+
+      ::-webkit-scrollbar-track {
+        background-color: #f5f5f5;
+        background-color: transparent;
+      }
+
+      ::-webkit-scrollbar {
+        width: 0.5rem;
+        background-color: #f5f5f5;
+        background-color: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: #000000;
+        border: 2px solid #555555;
+      }
+
+      /* General  */
       *,
       *::before,
       *::after {
@@ -43,6 +63,8 @@
           Helvetica Neue, sans-serif;
         text-align: left;
         color: var(--color-body-text);
+        width: 100%;
+        height: 100vh;
       }
 
       html {
@@ -51,6 +73,7 @@
 
       body {
         font-size: 1.4rem;
+        line-height: 1.5;
       }
 
       a {
@@ -62,6 +85,11 @@
         font-size: 1.6rem;
         font-weight: 500;
         color: var(--color-secondary);
+      }
+
+      #root {
+        width: 100%;
+        height: 100vh;
       }
     </style>
   </head>

@@ -13,7 +13,7 @@ const Layout: FunctionComponent = ({ children }) => {
 
 export default Layout;
 
-const Wrapper = styled.nav`
+const Wrapper = styled.div`
   width: 100vw;
   height: 100vh;
   position: relative;
@@ -22,5 +22,6 @@ const Wrapper = styled.nav`
   main {
     flex-grow: 1;
     flex-shrink: 1;
+    overflow: hidden;
   }
 `;

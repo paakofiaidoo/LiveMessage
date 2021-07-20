@@ -1,7 +1,7 @@
 import { useMachine } from "@xstate/react";
 import { ContextValue } from "./types";
 import { createSend } from "../shared-actions";
-import { machine, initialContext } from "./machine";
+import { initialMachine, initialContext } from "./machine";
 import React, {
   createContext,
   FunctionComponent,
@@ -12,7 +12,7 @@ import { ContextMessage } from "../service-message";
 import { useNetworkContext } from "../network";
 
 const defaultContext: ContextValue = [
-  machine.initialState,
+  initialMachine.initialState,
   createSend(initialContext),
 ];
 
@@ -20,7 +20,7 @@ export const context = createContext(defaultContext);
 export const useAuthContext = () => useContext(context);
 export const AuthProvider: FunctionComponent = ({ children }) => {
   const [netState, netSend] = useNetworkContext();
-  const [state, send] = useMachine(machine);
+  const [state, send] = useMachine(initialMachine);
   const ws = netState.context.ws;
 
   // Loading Context

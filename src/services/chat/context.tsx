@@ -2,7 +2,7 @@ import { useMachine } from "@xstate/react";
 import { useAuthContext } from "../auth";
 import { ContextValue } from "./types";
 import { createSend } from "../shared-actions";
-import { machine, initialContext } from "./machine";
+import { initialMachine, initialContext } from "./machine";
 import { subscribe } from "./network-actions";
 import React, {
   createContext,
@@ -10,19 +10,18 @@ import React, {
   useContext,
   useEffect,
 } from "react";
-import { ContextMessage } from "../service-message";
 import { useNetworkContext } from "../network";
 
 // User Context
 const defaultContext: ContextValue = [
-  machine.initialState,
+  initialMachine.initialState,
   createSend(initialContext),
 ];
 
 export const context = createContext(defaultContext);
-export const useMessageContext = () => useContext(context);
-export const MessageProvider: FunctionComponent = ({ children }) => {
-  const [state, send] = useMachine(machine);
+export const useChatContext = () => useContext(context);
+export const ChatProvider: FunctionComponent = ({ children }) => {
+  const [state, send] = useMachine(initialMachine);
   const [authState] = useAuthContext();
   const [netState] = useNetworkContext();
   const ws = netState.context.ws;
@@ -30,7 +29,7 @@ export const MessageProvider: FunctionComponent = ({ children }) => {
 
   // Loading Context
   useEffect(() => {
-    send(ContextMessage.LoadContext);
+    send("LOAD_CONTEXT");
   }, []);
 
   useEffect(() => {

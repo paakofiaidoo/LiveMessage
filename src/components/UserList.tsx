@@ -16,6 +16,13 @@ const UserList: FunctionComponent = () => {
 
   return (
     <Wrapper className="UserList">
+      <header>
+        <h2>Users</h2>
+        <p>
+          Seemless interactions with other users and send messages to yourself
+          as notes
+        </p>
+      </header>
       {userList.map((user, key) => (
         <UserCard
           key={key}
@@ -31,11 +38,10 @@ const UserList: FunctionComponent = () => {
 export default UserList;
 
 const Wrapper = styled.nav`
-  width: 25rem;
+  width: 30rem;
   height: 100%;
   box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.12);
   flex-shrink: 0;
-  padding: 2rem 0rem;
 
   .user {
     display: flex;
@@ -69,5 +75,13 @@ const Wrapper = styled.nav`
   .status {
     font-size: 1rem;
     color: var(--color-tertiary);
+  }
+
+  header {
+    padding: 2rem;
+
+    p {
+      color: var(--color-grey-light);
+    }
   }
 `;

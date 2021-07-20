@@ -1,22 +1,27 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
-import { MessageMessage } from "../services/service-message";
-import { useMessageContext } from "../services/message";
+import { ChatRef } from "../services/chat/types";
+import { useActor } from "@xstate/react";
+import Svg from "./Svg";
 
-const MessageInput: FunctionComponent = () => {
-  const [{ context }, send] = useMessageContext();
+interface Props {
+  chatRef: ChatRef;
+}
+
+const MessageInput: FunctionComponent<Props> = ({ chatRef }) => {
+  const [{ context }, send] = useActor(chatRef);
 
   return (
     <Wrapper className="message-input">
       <textarea
         name="message"
         placeholder="Enter your reply here..."
-        onChange={(e) => {
-          send(MessageMessage.Typing, { message: e.target.value });
-        }}
+        onChange={(e) => send({ type: "CHANGE", value: e.target.value })}
         value={context.message}
       ></textarea>
-      <button onClick={() => send(MessageMessage.Send)}>Send</button>
+      <button title="Send" onClick={() => send({ type: "SEND" })}>
+        <Svg iconPath="/icons/sprite.svg#send" />
+      </button>
     </Wrapper>
   );
 };
@@ -25,25 +30,21 @@ export default MessageInput;
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 10rem;
+  height: 8rem;
   display: flex;
-
   flex-grow: 0;
-  height: 22rem;
-  padding: 2rem var(--spacing-h);
-  display: flex;
-  flex-wrap: wrap;
+  padding: 1rem 2rem;
 
   textarea {
-    width: 100%;
-    height: 12rem;
-    padding: 2rem;
+    height: 100%;
+    padding: 1rem;
     border-radius: 0.6rem;
     border: 0.2rem solid #dbdcde;
     margin-bottom: 1rem;
     outline: none;
     resize: none;
     font-family: inherit;
+    flex-grow: 1;
   }
 
   textarea:focus {
@@ -52,28 +53,36 @@ const Wrapper = styled.div`
 
   button {
     flex-grow: 0;
-    text-transform: uppercase;
-    padding: 1rem 4rem;
-    margin-left: auto;
-    background-color: var(--color-secondary);
-    color: var(--color-primary);
-    border-radius: 0.6rem;
+    width: 4rem;
+    height: 100%;
+    margin-left: 0.5rem;
+    background-color: transparent;
     border: none;
-  }
+    outline: none;
 
-  button:hover {
-    box-shadow: 0rem 0.5rem 1rem var(--color-tertiary-trans);
-    transform: translateY(-0.2rem);
-  }
+    svg {
+      transition: transform 0.3s ease-out, fill 0.1s ease-out;
+    }
 
-  button:focus {
-    box-shadow: none;
-    transform: translateY(0);
-  }
+    &:focus {
+      outline: none;
 
-  button:disabled {
-    box-shadow: none;
-    transform: translateY(0);
-    background-color: var(--color-tertiary-light);
+      svg {
+        fill: var(--color-tertiary);
+      }
+    }
+
+    &:hover {
+      svg {
+        fill: var(--color-tertiary);
+        transform: scale(1.1);
+      }
+    }
+
+    &:disabled {
+      box-shadow: none;
+      transform: translateY(0);
+      background-color: var(--color-tertiary-light);
+    }
   }
 `;

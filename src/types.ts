@@ -4,7 +4,7 @@ export interface User {
   email: string;
   image: string;
   status: "online" | "offline";
-  blockList: string[];
+  blockBy: string[];
 }
 
 export interface Message {
