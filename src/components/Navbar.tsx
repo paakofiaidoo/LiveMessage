@@ -1,26 +1,25 @@
 import React, { FunctionComponent } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { useAuthContext } from "../services/auth";
-import { AuthMessage } from "../services/service-message";
+import { useKernelContext } from "../services/kernel";
 import Svg from "./Svg";
 
 const Navbar: FunctionComponent = () => {
-  const [_, send] = useAuthContext();
+  const [_, send] = useKernelContext().services.auth;
   const open = false;
   return (
     <Wrapper className="Navbar">
-      <MenuButton className="MenuButton">Open</MenuButton>
-      <div className="links">
+      <NavItem>
         <Link to="/" title="Messages">
           <Svg iconPath={"/icons/sprite.svg#speech-bubble"} />
           {open && <span>Messages</span>}
         </Link>
-      </div>
+      </NavItem>
+
       <NavItem
         className="NavItem"
         title="Logout"
-        onClick={() => send(AuthMessage.Logout)}
+        onClick={() => send("LOGOUT")}
       >
         <Svg iconPath={"/icons/sprite.svg#exit"} />
       </NavItem>
@@ -32,7 +31,7 @@ export default Navbar;
 
 const Wrapper = styled.nav`
   flex-shrink: 0;
-  width: 8rem;
+  width: 7rem;
   height: 100%;
   box-shadow: 1px 0px 1px rgba(0, 0, 0, 0.12);
   display: flex;

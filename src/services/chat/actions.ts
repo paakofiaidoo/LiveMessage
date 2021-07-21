@@ -12,8 +12,7 @@ export const actions: Action = {
   /* Core Actions */
   updateKernel: assign({
     kernel: (_, event) => {
-      console.log("chat:updateKernel: ", event.kernel);
-
+      console.log("[Chat] Received Updated Kernel");
       return event.kernel;
     },
   }),

@@ -1,6 +1,7 @@
 import { createMachine } from "xstate";
+import { createSend } from "../shared-actions";
 import { actions } from "./actions";
-import { Context } from "./types";
+import { Context, NetworkActor } from "./types";
 
 export const initialContext: Context = {
   kernel: undefined,
@@ -10,7 +11,7 @@ export const initialContext: Context = {
 export const createNetworkMachine = () =>
   createMachine<Context>(
     {
-      id: "user",
+      id: "network",
       context: initialContext,
       on: {
         /* Kernel Events */
@@ -25,3 +26,7 @@ export const createNetworkMachine = () =>
   );
 
 export const initialMachine = createNetworkMachine();
+export const initialNetworkActor: NetworkActor = [
+  initialMachine.initialState,
+  createSend(initialMachine.initialState.context),
+];

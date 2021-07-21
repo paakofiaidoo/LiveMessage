@@ -1,12 +1,12 @@
 import React, { FunctionComponent, useEffect } from "react";
 import styled from "styled-components";
-import { useAuthContext } from "../services/auth";
-import { useUserContext } from "../services/user";
+import { useKernelContext } from "../services/kernel";
 import UserCard from "./UserCard";
 
 const UserList: FunctionComponent = () => {
-  const [{ context }, send] = useUserContext();
-  const [authState] = useAuthContext();
+  const { auth, user } = useKernelContext().services;
+  const [authState] = auth;
+  const [{ context }, send] = user;
   const appUser = authState.context.user;
   const userList = Object.values(context.users);
 
@@ -17,7 +17,7 @@ const UserList: FunctionComponent = () => {
   return (
     <Wrapper className="UserList">
       <header>
-        <h2>Users</h2>
+        <h2>Hello</h2>
         <p>
           Seemless interactions with other users and send messages to yourself
           as notes
@@ -28,7 +28,6 @@ const UserList: FunctionComponent = () => {
           key={key}
           user={user}
           isMe={(appUser && appUser.id) === user.id}
-          blockUser={() => send("BlockUser", { id: user.id })}
         />
       ))}
     </Wrapper>
@@ -79,6 +78,11 @@ const Wrapper = styled.nav`
 
   header {
     padding: 2rem;
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
 
     p {
       color: var(--color-grey-light);

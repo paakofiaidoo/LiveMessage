@@ -2,14 +2,14 @@ import React, { FunctionComponent } from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 
-import { useAuthContext } from "../services/auth";
+import { useKernelContext } from "../services/kernel";
 
 import AppBar from "../components/AppBar";
 import UserList from "../components/UserList";
 import ChatList from "../components/ChatList";
 
 const Messages: FunctionComponent = () => {
-  const [{ context }] = useAuthContext();
+  const [{ context }] = useKernelContext().services.auth;
 
   // Check logged in
   if (!context.user) return <Redirect to="/login" />;

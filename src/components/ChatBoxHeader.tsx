@@ -1,9 +1,8 @@
 import { useActor } from "@xstate/react";
 import React, { FunctionComponent, useState } from "react";
 import styled from "styled-components";
-import { useAuthContext } from "../services/auth";
 import { Chat } from "../services/chat/types";
-import { useUserContext } from "../services/user";
+import { useKernelContext } from "../services/kernel";
 import Avatar from "./Avatar";
 import Svg from "./Svg";
 
@@ -12,31 +11,30 @@ interface Props {
 }
 
 const ChatBoxHeader: FunctionComponent<Props> = ({ chat }) => {
+  const [toggle, setToggle] = useState({ menu: false, block: false });
   const [{ context }, send] = useActor(chat.ref);
-  const [userState, sendUser] = useUserContext();
-  const [authState] = useAuthContext();
-  const [toggle, setToggle] = useState(false);
-  const user = userState.context.users[context.userId];
-
-  // Prevent opening chat without user
-  if (!user) send("CLOSE");
+  const services = useKernelContext().services;
+  const [userState, sendUser] = services.user;
+  const [authState] = services.auth;
 
   const me = authState.context.user;
   const isMe = me && me.id === context.userId;
+  const sentTo = userState.context.users[context.userId];
 
   const closeChat = () => send({ type: "CLOSE" });
-  const toggleMenu = () => setToggle(!toggle);
-  const blockUser = () => sendUser("BlockUser", { id: user.id });
+  const blockUser = () => sendUser({ type: "BlockUser", id: sentTo.id });
+  const toggleMenu = () => setToggle({ menu: !toggle.menu, block: false });
+  const toggleBlockUser = () => setToggle({ ...toggle, block: !toggle.block });
 
   return (
-    <Wrapper className={`ChatBoxHeader`}>
+    <Wrapper className={`ChatBoxHeader `}>
       <div className="header">
         <Avatar
           className="xsmall dp"
-          src={user.image}
-          alt={user.name + "'s profile picture"}
+          src={sentTo.image}
+          alt={sentTo.name + "'s profile picture"}
         />
-        <h2>{user.name}</h2>
+        <h2>{sentTo.name}</h2>
         <button
           title="Chat Settings"
           onClick={toggleMenu}
@@ -46,20 +44,26 @@ const ChatBoxHeader: FunctionComponent<Props> = ({ chat }) => {
         </button>
       </div>
 
-      {toggle && (
+      {toggle.menu && (
         <Menu className="menu">
           {!isMe && (
-            <div className="block-user">
-              <span className="label">Block User</span>
-              <span className="question">
-                Are you sure you want block user?
+            <div className={`block-user ${toggle.block && "selected"}`}>
+              <span onClick={toggleBlockUser} className={`label`}>
+                Block User
               </span>
-              <a role="button" onClick={toggleMenu}>
-                No
-              </a>
-              <a role="button" onClick={blockUser}>
-                Yes
-              </a>
+              {toggle.block && (
+                <>
+                  <span className="question">
+                    Are you sure you want block user?
+                  </span>
+                  <a role="button" onClick={toggleMenu}>
+                    No
+                  </a>{" "}
+                  <a role="button" onClick={blockUser}>
+                    Yes
+                  </a>
+                </>
+              )}
             </div>
           )}
           <button onClick={closeChat}>Close Chat</button>
@@ -118,10 +122,12 @@ const Wrapper = styled.header`
 
 const Menu = styled.div`
   width: 100%;
-  padding: 2rem 2rem;
+  padding: 1rem 2rem 2rem 2rem;
+  text-align: center;
 
   > * {
     display: block;
+    width: 100%;
     padding: 0.5rem 0rem;
     color: var(--color-tertiary);
     border: none;
@@ -133,6 +139,10 @@ const Menu = styled.div`
   a,
   .label {
     cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   .block-user {
@@ -166,7 +176,7 @@ const Menu = styled.div`
       }
     }
 
-    &:hover {
+    &.selected {
       color: var(--color-body-text);
 
       .label {

@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 interface Props {
   src: string;
@@ -10,7 +10,7 @@ interface Props {
 const Avatar: FunctionComponent<Props> = ({ src, alt, className }) => {
   return (
     <Wrapper className={"Avatar " + className}>
-      <img src={src || "images/default-profile.jpg"} alt={alt} />
+      <img src={src} alt={alt} />
     </Wrapper>
   );
 };
@@ -27,6 +27,11 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   /* overflow: hidden; */
+
+  background-image: url("/images/default-profile.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
   img {
     width: 100%;

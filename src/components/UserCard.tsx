@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
-import { useChatContext } from "../services/chat";
+import { useKernelContext } from "../services/kernel";
 import { User } from "../types";
 import Avatar from "./Avatar";
 import Svg from "./Svg";
@@ -8,35 +8,30 @@ import Svg from "./Svg";
 interface Props {
   user: User;
   isMe: boolean;
-  blockUser(): void;
 }
 
-const UserCard: FunctionComponent<Props> = ({ user, isMe, blockUser }) => {
-  const [{ context }, send] = useChatContext();
+const UserCard: FunctionComponent<Props> = ({ user, isMe }) => {
+  const [{ context }, send] = useKernelContext().services.chat;
   const selected = context.selected === user.id ? "selected" : "";
   const isOnline = user.status === "online";
-  const selectChat = () => send("CHAT.START", { userId: user.id });
+  const selectChat = () => send({ type: "CHAT.START", userId: user.id });
 
   return (
-    <Wrapper className={`UserCard ${selected}`}>
+    <Wrapper className={`UserCard ${selected}`} onClick={selectChat}>
       <Avatar
         className={`image ${isOnline ? "active" : ""}`}
         src={user.image}
         alt={user.name + "'s profile picture"}
       />
       <h2>
-        {user.name}
+        {user.name} {isMe && "(You)"}
         <span>{user.email}</span>
         <span role="button" className="status">
           {user.status}
         </span>
       </h2>
 
-      <button
-        onClick={selectChat}
-        title={isMe ? "My Notes" : "Chat"}
-        className="chat-link"
-      >
+      <button title={isMe ? "My Notes" : "Chat"} className="chat-link">
         <Svg iconPath="/icons/sprite.svg#chat" />
       </button>
     </Wrapper>
@@ -51,6 +46,7 @@ const Wrapper = styled.div`
   align-items: center;
   padding: 1.5rem 2rem;
   transition: all 0.5s ease-in-out;
+  cursor: pointer;
 
   .image {
     margin-right: 1rem;
@@ -77,6 +73,10 @@ const Wrapper = styled.div`
 
   &:hover {
     background-color: var(--color-tertiary-light);
+
+    .chat-link svg {
+      transform: scale(1.3);
+    }
   }
 
   &.selected {
@@ -84,6 +84,15 @@ const Wrapper = styled.div`
 
     h2 {
       color: var(--color-primary);
+    }
+
+    .chat-link {
+      background-color: transparent;
+
+      svg {
+        transform: scale(1.3);
+        fill: var(--color-tertiary-light);
+      }
     }
   }
 
@@ -106,10 +115,6 @@ const Wrapper = styled.div`
     svg {
       fill: var(--color-secondary);
       height: 1.5rem;
-    }
-
-    &:hover {
-      transform: scale(1.2);
     }
   }
 `;

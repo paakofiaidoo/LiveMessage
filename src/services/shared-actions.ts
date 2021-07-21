@@ -17,11 +17,17 @@ export const createPersist = (storeName: string) => {
 
 export const createLoadContext = <T>(storeName: string) => {
   return assign<T>((ctx) => {
+    const context: any = ctx;
     try {
       if (!localStorage) throw new Error("No localStorage");
 
       const saved = localStorage.getItem(storeName) || "{}";
       const parsed = JSON.parse(saved);
+
+      // Reassigning Persist
+      if (parsed && context && context["kernel"]) {
+        parsed.kernel = context["kernel"];
+      }
 
       return parsed;
     } catch (e) {

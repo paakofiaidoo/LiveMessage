@@ -7,7 +7,7 @@ export const actions: Action = {
   /* Kernel Actions */
   updateKernel: assign({
     kernel: (_, event) => {
-      console.log("user:updateKernel: ", event.kernel);
+      console.log("[User] Received Updated Kernel");
 
       return event.kernel;
     },
@@ -22,9 +22,16 @@ export const actions: Action = {
     users: (_, e: any) => e.data,
   }),
   removeUser: assign({
-    users: (ctx, e) => {
-      if (ctx.users[e.data]) delete ctx.users[e.data];
-      return ctx.users;
+    users: ({ users, kernel }, e) => {
+      if (users[e.data]) {
+        // Send Remove Chat
+        kernel && kernel.chat.send({ type: "CHAT.REMOVE", userId: e.data });
+
+        // Delete User
+        delete users[e.data];
+      }
+
+      return users;
     },
   }),
   setToOnline: assign({

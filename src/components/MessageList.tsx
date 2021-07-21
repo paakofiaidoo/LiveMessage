@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useRef } from "react";
 import styled from "styled-components";
-import { useAuthContext } from "../services/auth";
+import { useKernelContext } from "../services/kernel";
 import { Message } from "../types";
 import MessageCard from "./MessageCard";
 
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const MessageList: FunctionComponent<Props> = ({ messages }) => {
-  const [{ context }] = useAuthContext();
+  const [{ context }] = useKernelContext().services.auth;
   const user = context.user;
   const ref = useRef<HTMLDivElement>(null);
 

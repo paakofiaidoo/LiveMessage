@@ -1,15 +1,13 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
 import { GoogleLogin } from "react-google-login";
-import { useAuthContext } from "../services/auth";
-import { AuthMessage } from "../services/service-message";
 import { Redirect } from "react-router-dom";
-
+import { useKernelContext } from "../services/kernel";
 const GOOGLE_ID =
   "833267131071-cq5s14mino3kv30433m5rbaqjhn42mo2.apps.googleusercontent.com";
 
 const Login: FunctionComponent = () => {
-  const [{ context }, send] = useAuthContext();
+  const [{ context }, send] = useKernelContext().services.auth;
 
   // Check logged in
   if (context.user) return <Redirect to="/" />;
@@ -24,10 +22,10 @@ const Login: FunctionComponent = () => {
           clientId={GOOGLE_ID}
           buttonText="Login With Google"
           onSuccess={(res: any) => {
-            send(AuthMessage.Login, { token: res.tokenId });
+            send({ type: "LOGIN", token: res.tokenId });
           }}
           onFailure={(e) => {
-            send(AuthMessage.Error, { error: e });
+            send({ type: "ERROR", error: e });
           }}
           cookiePolicy={"single_host_origin"}
           disabled={context.authenticating}

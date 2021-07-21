@@ -1,6 +1,7 @@
 import { createMachine } from "xstate";
+import { createSend } from "../shared-actions";
 import { actions } from "./actions";
-import { Context } from "./types";
+import { ChatActor, Context } from "./types";
 
 export const initialContext: Context = {
   kernel: undefined,
@@ -44,3 +45,7 @@ export const createChatMachine = () =>
   );
 
 export const initialMachine = createChatMachine();
+export const initialChatActor: ChatActor = [
+  initialMachine.initialState,
+  createSend(initialMachine.initialState.context),
+];

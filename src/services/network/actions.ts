@@ -6,7 +6,7 @@ export const actions: Action = {
   /* Kernel Actions */
   updateKernel: assign({
     kernel: (_, event) => {
-      console.log("network:updateKernel: ", event.kernel);
+      console.log("[Network]  Received Updated Kernel");
 
       return event.kernel;
     },

@@ -21,3 +21,4 @@ export type Machine = StateMachine<Context, any, AnyEventObject>;
 export type Ref = ActorRefFrom<Machine>;
 export type Action = ActionFunctionMap<Context, AnyEventObject>;
 export type ContextValue = [State<Context>, Send<Context>];
+export type AuthActor = [State<Context>, Send<Context>];

@@ -8,8 +8,7 @@ export const actions: Action = {
   /* Kernel Actions */
   updateKernel: assign({
     kernel: (_, event) => {
-      console.log("auth:updateKernel: ", event.kernel);
-
+      console.log("[Auth] Updating Kernel");
       return event.kernel;
     },
   }),
