@@ -1,11 +1,10 @@
-import { createMachine } from "xstate";
+import { createMachine, send } from "xstate";
 import { AUTH_TOKEN_KEY } from "../../utils/apollo";
 import { createSend } from "../shared-actions";
 import { actions } from "./actions";
 import { login } from "./network-actions";
 import { AuthActor, Context } from "./types";
 import jwt from "jsonwebtoken";
-import { respond, send, sendParent } from "xstate/lib/actions";
 
 export const initialContext: Context = {
   kernel: undefined,
@@ -14,36 +13,6 @@ export const initialContext: Context = {
   error: null,
   token: "",
 };
-
-const statusMachine = createMachine({
-  id: "authStatus",
-  initial: "waiting",
-  states: {
-    waiting: {
-      on: {
-        CHECK: {
-          actions: respond(() => {
-            const good = { type: "GOOD_AUTH" };
-            const bad = { type: "LOGOUT" };
-
-            // Checking Login
-            if (!localStorage) return bad;
-
-            const token = localStorage.getItem(AUTH_TOKEN_KEY) || "";
-            const decoded: any = jwt.decode(token);
-
-            // Check expiration
-            if (!decoded || !decoded.exp || Date.now() > decoded.exp * 1000) {
-              return bad;
-            }
-
-            return good;
-          }),
-        },
-      },
-    },
-  },
-});
 
 export const createAuthMachine = () =>
   createMachine<Context>(
@@ -56,9 +25,7 @@ export const createAuthMachine = () =>
           id: "login",
           initial: "idle",
           states: {
-            idle: {
-              on: { LOGIN: "login" },
-            },
+            idle: { on: { LOGIN: "login" } },
             login: {
               id: "loginUser",
               onEntry: ["updateToken", "updateToggleAuthenticating"],
@@ -70,7 +37,7 @@ export const createAuthMachine = () =>
                     "updateUser",
                     "updateToggleAuthenticating",
                     "persist",
-                    send({ type: "GOOD_AUTH" }),
+                    send({ type: "START_CHECK" }),
                   ],
                 },
                 onError: {
@@ -91,13 +58,20 @@ export const createAuthMachine = () =>
 
         status: {
           id: "status",
-          initial: "checking",
+          initial: "idle",
           states: {
+            idle: {
+              on: { START_CHECK: "checking" },
+              entry: send("START_CHECK", { delay: 500 }),
+            },
             checking: {
-              id: "checking",
-              invoke: { id: "statusMachine", src: statusMachine },
-              entry: send("CHECK", { to: "statusMachine", delay: 2000 }),
-              on: { GOOD_AUTH: "checking" },
+              on: { STOP_CHECK: "stopping" },
+              activities: "checkStatus",
+              entry: () => console.log("[auth:status] Starting..."),
+            },
+            stopping: {
+              on: { START_CHECK: "checking" },
+              entry: () => console.log("[auth:status] Stopping..."),
             },
           },
         },
@@ -114,7 +88,30 @@ export const createAuthMachine = () =>
         LOGOUT: { actions: ["logout"] },
       },
     },
-    { actions }
+    {
+      actions,
+      activities: {
+        checkStatus: ({ kernel }) => {
+          const interval = setInterval(() => {
+            console.log("[auth:status] Checking Status!");
+
+            // Checking Login
+            if (!localStorage || !kernel) return;
+
+            const token = localStorage.getItem(AUTH_TOKEN_KEY) || "";
+            const decoded: any = jwt.decode(token);
+
+            // Check expiration
+            if (!decoded || !decoded.exp || Date.now() > decoded.exp * 1000) {
+              kernel.auth.send({ type: "STOP_CHECK" });
+              kernel.auth.send({ type: "LOGOUT" });
+            }
+          }, 5000);
+
+          () => clearInterval(interval);
+        },
+      },
+    }
   );
 
 export const initialMachine = createAuthMachine();

@@ -11,20 +11,19 @@ interface Props {
 }
 
 const ChatBoxHeader: FunctionComponent<Props> = ({ chat }) => {
-  const [toggle, setToggle] = useState({ menu: false, block: false });
+  const [menu, setMenu] = useState(false);
   const [{ context }, send] = useActor(chat.ref);
   const services = useKernelContext().services;
   const [userState, sendUser] = services.user;
   const [authState] = services.auth;
 
   const me = authState.context.user;
-  const isMe = me && me.id === context.userId;
+  const isMe = (me && me.id) === context.userId;
   const sentTo = userState.context.users[context.userId];
 
-  const closeChat = () => send({ type: "CLOSE" });
+  const toggleMenu = () => setMenu(!menu);
   const blockUser = () => sendUser({ type: "BlockUser", id: sentTo.id });
-  const toggleMenu = () => setToggle({ menu: !toggle.menu, block: false });
-  const toggleBlockUser = () => setToggle({ ...toggle, block: !toggle.block });
+  const closeChat = () => send({ type: "CLOSE" });
 
   return (
     <Wrapper className={`ChatBoxHeader `}>
@@ -38,36 +37,19 @@ const ChatBoxHeader: FunctionComponent<Props> = ({ chat }) => {
         <button
           title="Chat Settings"
           onClick={toggleMenu}
-          className={`close-action ${toggle && "active"}`}
+          className={`close-action ${menu ? "active" : ""}`}
         >
           <Svg iconPath="/icons/sprite.svg#menu" />
         </button>
       </div>
 
-      {toggle.menu && (
-        <Menu className="menu">
-          {!isMe && (
-            <div className={`block-user ${toggle.block && "selected"}`}>
-              <span onClick={toggleBlockUser} className={`label`}>
-                Block User
-              </span>
-              {toggle.block && (
-                <>
-                  <span className="question">
-                    Are you sure you want block user?
-                  </span>
-                  <a role="button" onClick={toggleMenu}>
-                    No
-                  </a>{" "}
-                  <a role="button" onClick={blockUser}>
-                    Yes
-                  </a>
-                </>
-              )}
-            </div>
-          )}
-          <button onClick={closeChat}>Close Chat</button>
-        </Menu>
+      {menu && (
+        <Menu
+          isMe={isMe}
+          closeChat={closeChat}
+          toggleMenu={toggleMenu}
+          blockUser={blockUser}
+        />
       )}
     </Wrapper>
   );
@@ -79,14 +61,13 @@ const Wrapper = styled.header`
   position: relative;
   flex-shrink: 0;
   flex-grow: 0;
-
   width: 100%;
   border-bottom: 1px solid rgba(0, 0, 0, 0.03);
 
   .header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     height: 6rem;
     padding: 1rem 2rem;
   }
@@ -104,6 +85,7 @@ const Wrapper = styled.header`
     width: 3rem;
     height: 3rem;
     border: none;
+    /* margin-left: auto; */
     background-color: transparent;
 
     svg {
@@ -120,79 +102,107 @@ const Wrapper = styled.header`
   }
 `;
 
-const Menu = styled.div`
-  width: 100%;
-  padding: 1rem 2rem 2rem 2rem;
-  text-align: center;
+interface MenuProps {
+  isMe: boolean;
+  blockUser(): void;
+  closeChat(): void;
+  toggleMenu(): void;
+}
+const Menu: FunctionComponent<MenuProps> = ({
+  isMe,
+  closeChat,
+  toggleMenu,
+  blockUser,
+}) => {
+  const [block, setBlock] = useState(false);
 
-  > * {
-    display: block;
-    width: 100%;
-    padding: 0.5rem 0rem;
-    color: var(--color-tertiary);
-    border: none;
-    outline: 0;
-    background-color: transparent;
-  }
+  return (
+    <MenuWrapper className="Menu">
+      {!isMe && (
+        <div
+          onClick={() => setBlock(!block)}
+          className={`item block-user ${block ? "selected" : ""}`}
+        >
+          <span className="label">Block User</span>
+          <div className="subitem">
+            <span className="question">Are you sure?</span>
+            <a role="button" onClick={toggleMenu}>
+              No
+            </a>{" "}
+            <a role="button" onClick={blockUser}>
+              Yes
+            </a>
+          </div>
+        </div>
+      )}
+      <a role="button" className={`item`} onClick={closeChat}>
+        <span className="label">Close Chat</span>
+      </a>
+    </MenuWrapper>
+  );
+};
 
-  button,
-  a,
-  .label {
+const MenuWrapper = styled.div`
+  width: 22rem;
+  border-radius: 0.2rem;
+  padding: 1rem 2rem;
+  position: absolute;
+  right: 3.4rem;
+  top: calc(100% - 2rem);
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.16);
+  background-color: var(--color-primary);
+
+  .item {
     cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
+    display: block;
   }
 
   .block-user {
-    width: 100%;
-    display: inline-block;
-    color: var(--color-tertiary);
-
     .label {
       display: block;
       color: inherit;
       margin-bottom: 0.2rem;
-    }
-
-    .question {
-      display: none;
-      color: var(--color-grey-light);
-      margin-right: 1rem;
-      font-size: 1.2rem;
-      font-weight: normal;
-    }
-
-    a {
-      display: none;
-      margin-right: 1.5rem;
-      color: var(--color-body-text);
-      opacity: 0;
 
       &:hover {
         color: var(--color-tertiary);
-        text-decoration: underline;
+      }
+    }
+
+    .subitem {
+      display: none;
+
+      .question {
+        color: var(--color-grey-light);
+        margin-right: 1rem;
+        font-size: 1.2rem;
+        font-weight: normal;
+      }
+
+      a {
+        margin-right: 1.5rem;
+        color: var(--color-body-text);
+
+        &:hover {
+          color: var(--color-tertiary);
+          text-decoration: underline;
+        }
       }
     }
 
     &.selected {
-      color: var(--color-body-text);
-
       .label {
+        color: var(--color-body-text);
+
+        /* .label {
         font-size: 1.3rem;
         font-weight: normal;
         color: var(--color-grey-light);
         margin-bottom: 0.5rem;
+      } */
       }
 
-      .question {
-        display: inline-block;
-      }
-
-      a {
-        display: inline-block;
-        opacity: 1;
+      .subitem {
+        display: block;
       }
     }
   }

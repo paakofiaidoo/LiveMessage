@@ -6,6 +6,7 @@ import { Context, UserActor } from "./types";
 
 export const initialContext: Context = {
   kernel: undefined,
+  isOpen: false,
   users: {},
   userFetchError: null,
   userBlockError: null,
@@ -73,6 +74,9 @@ export const createUserMachine = () =>
         UserOnline: { actions: ["setToOnline", "persist"] },
         UserOffline: { actions: ["setToOffline", "persist"] },
         UserBlocked: { actions: ["removeUser", "persist"] },
+        TOGGLE: { actions: ["toggle", "persist"] },
+        CLOSE_LIST: { actions: ["closeList", "persist"] },
+        OPEN_LIST: { actions: ["openList", "persist"] },
       },
     },
     {

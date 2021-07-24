@@ -13,6 +13,7 @@ export type UserCollection = Record<string, User>;
 
 export interface Context {
   kernel: KernelContext | undefined;
+  isOpen: boolean;
   users: UserCollection;
   userFetchError: string | null;
   userBlockError: string | null;

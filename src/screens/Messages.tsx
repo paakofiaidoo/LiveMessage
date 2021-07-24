@@ -4,7 +4,6 @@ import styled from "styled-components";
 
 import { useKernelContext } from "../services/kernel";
 
-import AppBar from "../components/AppBar";
 import UserList from "../components/UserList";
 import ChatList from "../components/ChatList";
 
@@ -16,7 +15,6 @@ const Messages: FunctionComponent = () => {
 
   return (
     <Wrapper className="Messages">
-      {/* <AppBar title="Live Messages" /> */}
       <div className="AppBody">
         <UserList />
         <ChatList />

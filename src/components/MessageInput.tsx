@@ -30,10 +30,10 @@ export default MessageInput;
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 8rem;
+  height: 9rem;
   display: flex;
   flex-grow: 0;
-  padding: 1rem 2rem;
+  padding: 1rem 2rem 2rem 2rem;
 
   textarea {
     height: 100%;

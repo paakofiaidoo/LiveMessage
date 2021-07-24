@@ -5,11 +5,16 @@ import { useKernelContext } from "../services/kernel";
 import Svg from "./Svg";
 
 const Navbar: FunctionComponent = () => {
-  const [_, send] = useKernelContext().services.auth;
+  const { auth, user } = useKernelContext().services;
+  const [_, send] = auth;
+  const [__, sendUser] = user;
   const open = false;
+
+  const toggleUserList = () => sendUser("TOGGLE");
+
   return (
     <Wrapper className="Navbar">
-      <NavItem>
+      <NavItem onClick={toggleUserList}>
         <Link to="/" title="Messages">
           <Svg iconPath={"/icons/sprite.svg#speech-bubble"} />
           {open && <span>Messages</span>}

@@ -83,7 +83,6 @@ export const createChatMachine = (context: ChatContext) =>
         CLOSE: { actions: ["close", "commit"] },
         OPEN: { actions: ["open", "commit"] },
         INCOMING_MESSAGE: { actions: ["attachIncomingMessage", "commit"] },
-        // FOCUSED: { actions: "sendActive" },
       },
     },
     { actions }

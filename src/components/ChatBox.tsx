@@ -22,17 +22,13 @@ const ChatBox: FunctionComponent<Props> = ({ chat, scrollTo }) => {
     if (chatState.context.selected !== chat.userId || !ref.current) return;
 
     // scrollTo({ left: ref.current.offsetLeft });
-    scrollTo({ left: ref.current.offsetLeft - (ref.current.offsetWidth - 40) });
+    scrollTo({ left: ref.current.offsetLeft - ref.current.offsetWidth });
   }, [chatState.context.selected]);
 
   // Fetch Message
-  // useEffect(() => {
-  //   send({ type: "FETCH" });
-  // }, [context.isOpen]);
-
   useEffect(() => {
     send({ type: "FETCH" });
-  }, []);
+  }, [context.isOpen]);
 
   return (
     <Wrapper className={`ChatBox`} ref={ref}>
@@ -56,8 +52,9 @@ const Wrapper = styled.div`
 
   height: 100%;
   box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.12);
+  background-color: rgba(255, 255, 255, 0.8);
 
   > * {
-    min-width: 33rem;
+    min-width: 30rem;
   }
 `;

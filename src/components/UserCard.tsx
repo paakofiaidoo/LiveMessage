@@ -4,20 +4,26 @@ import { useKernelContext } from "../services/kernel";
 import { User } from "../types";
 import Avatar from "./Avatar";
 import Svg from "./Svg";
+import { anime, fadeIn, fadeOut } from "./anime";
 
 interface Props {
   user: User;
   isMe: boolean;
+  isMinimized: boolean;
 }
 
-const UserCard: FunctionComponent<Props> = ({ user, isMe }) => {
+const UserCard: FunctionComponent<Props> = ({ user, isMe, isMinimized }) => {
   const [{ context }, send] = useKernelContext().services.chat;
   const selected = context.selected === user.id ? "selected" : "";
+  const minimize = isMinimized ? "minimize" : "";
   const isOnline = user.status === "online";
   const selectChat = () => send({ type: "CHAT.START", userId: user.id });
 
   return (
-    <Wrapper className={`UserCard ${selected}`} onClick={selectChat}>
+    <Wrapper
+      className={`UserCard ${selected} ${minimize}`}
+      onClick={selectChat}
+    >
       <Avatar
         className={`image ${isOnline ? "active" : ""}`}
         src={user.image}
@@ -115,6 +121,18 @@ const Wrapper = styled.div`
     svg {
       fill: var(--color-secondary);
       height: 1.5rem;
+    }
+  }
+
+  h2,
+  button {
+    ${anime({ name: fadeIn, duration: 0.3, delay: 0.3 })}
+  }
+
+  &.minimize {
+    h2,
+    button {
+      ${anime({ name: fadeOut, duration: 0.3 })}
     }
   }
 `;

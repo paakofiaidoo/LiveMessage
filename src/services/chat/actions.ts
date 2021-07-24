@@ -67,4 +67,8 @@ export const actions: Action = {
       chat.ref.send({ type: "OPEN" });
     });
   },
+
+  sendCloseUserList: ({ kernel }) => {
+    kernel && kernel.user.send({ type: "CLOSE_LIST" });
+  },
 };

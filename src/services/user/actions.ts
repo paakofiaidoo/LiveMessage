@@ -48,4 +48,7 @@ export const actions: Action = {
   }),
   updateUserFetchError: assign({ userFetchError: (_, e: any) => e.data }),
   updateBlockError: assign({ userBlockError: (_, e: any) => e.data }),
+  toggle: assign({ isOpen: ({ isOpen }) => !isOpen }),
+  closeList: assign({ isOpen: (_) => false }),
+  openList: assign({ isOpen: (_) => true }),
 };

@@ -8,7 +8,6 @@ import {
 import { Send } from "../shared-actions";
 import { Message } from "../../types";
 import { Context as KernelContext } from "../kernel/types";
-import { ActorRef } from "@xstate/react/lib/types";
 
 export interface ChatContext {
   isOpen: boolean;
