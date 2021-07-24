@@ -108,6 +108,7 @@ interface MenuProps {
   closeChat(): void;
   toggleMenu(): void;
 }
+
 const Menu: FunctionComponent<MenuProps> = ({
   isMe,
   closeChat,
@@ -117,7 +118,7 @@ const Menu: FunctionComponent<MenuProps> = ({
   const [block, setBlock] = useState(false);
 
   return (
-    <MenuWrapper className="Menu">
+    <MenuWrapper className="Menu" onBlur={toggleMenu} autoFocus>
       {!isMe && (
         <div
           onClick={() => setBlock(!block)}
@@ -142,26 +143,29 @@ const Menu: FunctionComponent<MenuProps> = ({
   );
 };
 
-const MenuWrapper = styled.div`
-  width: 22rem;
+const MenuWrapper = styled.button`
+  display: block;
+  width: 20rem;
+  padding: 1rem 0rem;
   border-radius: 0.2rem;
-  padding: 1rem 2rem;
   position: absolute;
   right: 3.4rem;
   top: calc(100% - 2rem);
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.16);
   background-color: var(--color-primary);
+  text-align: left;
 
   .item {
     cursor: pointer;
     display: block;
+    padding: 0.5rem 2rem;
   }
 
   .block-user {
     .label {
       display: block;
       color: inherit;
-      margin-bottom: 0.2rem;
+      /* margin-bottom: 0.2rem; */
 
       &:hover {
         color: var(--color-tertiary);

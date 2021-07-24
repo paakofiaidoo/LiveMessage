@@ -14,6 +14,7 @@ const MessageInput: FunctionComponent<Props> = ({ chatRef }) => {
   return (
     <Wrapper className="message-input">
       <textarea
+        autoFocus
         name="message"
         placeholder="Enter your reply here..."
         onChange={(e) => send({ type: "CHANGE", value: e.target.value })}

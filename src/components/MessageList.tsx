@@ -18,7 +18,7 @@ const MessageList: FunctionComponent<Props> = ({ messages }) => {
     if (ref.current) {
       ref.current.scrollTo({ top: ref.current.scrollHeight });
     }
-  }, []);
+  }, [messages]);
 
   return (
     <Wrapper className="MessageList" ref={ref}>
