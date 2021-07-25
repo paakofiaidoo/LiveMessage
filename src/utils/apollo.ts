@@ -5,7 +5,7 @@ import { SubscriptionClient } from "subscriptions-transport-ws";
 export const AUTH_TOKEN_KEY = `bm8za`;
 const BASE_ADDRESS = `livemessage-server.herokuapp.com`;
 // const BASE_ADDRESS = `localhost:4000`;
-const URL = `http://${BASE_ADDRESS}`;
+const URL = `https://${BASE_ADDRESS}`;
 const WS_URL = `ws://${BASE_ADDRESS}/subscriptions`;
 
 /** WebSocket Client */
