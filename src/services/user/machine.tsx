@@ -1,11 +1,12 @@
 import { createMachine } from "xstate";
-import { ContextMessage } from "../service-message";
+import { createSend } from "../shared-actions";
 import { actions } from "./actions";
 import { findUsers, blockUser } from "./network-actions";
-import { Context } from "./types";
+import { Context, UserActor } from "./types";
 
 export const initialContext: Context = {
   kernel: undefined,
+  isOpen: false,
   users: {},
   userFetchError: null,
   userBlockError: null,
@@ -42,7 +43,7 @@ export const createUserMachine = () =>
         blockUser: {
           initial: "idle",
           states: {
-            idle: { on: { BlockUser: "blocking" } },
+            idle: { on: { BlockUser: { target: "blocking", cond: "hasId" } } },
             blocking: {
               id: "blockUser",
               invoke: {
@@ -67,15 +68,25 @@ export const createUserMachine = () =>
         UPDATE: { actions: ["updateKernel"] },
 
         /* Store Events */
-        [ContextMessage.LoadContext]: { actions: "loadContext" },
+        LOAD_CONTEXT: { actions: "loadContext" },
 
         /* User Events */
         UserOnline: { actions: ["setToOnline", "persist"] },
         UserOffline: { actions: ["setToOffline", "persist"] },
         UserBlocked: { actions: ["removeUser", "persist"] },
+        TOGGLE: { actions: ["toggle", "persist"] },
+        CLOSE_LIST: { actions: ["closeList", "persist"] },
+        OPEN_LIST: { actions: ["openList", "persist"] },
       },
     },
-    { actions }
+    {
+      actions,
+      guards: { hasId: (_, { id }) => !!id },
+    }
   );
 
 export const initialMachine = createUserMachine();
+export const initialUserActor: UserActor = [
+  initialMachine.initialState,
+  createSend(initialMachine.initialState.context),
+];

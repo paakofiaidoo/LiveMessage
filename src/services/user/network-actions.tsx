@@ -54,7 +54,7 @@ export const subscribeToUserOnline = (
   const observer = {
     next: (result: any) => {
       const userOnline = result && result.data && result.data.userOnline;
-      userOnline && send("UserOnline", { data: userOnline });
+      userOnline && send({ type: "UserOnline", data: userOnline });
     },
     error: (e: any) => console.log("[User] Bad Sub: ", e),
     complete: () => console.log("Complete Sub"),
@@ -70,7 +70,7 @@ export const subscribeToUserOffline = (
   const observer = {
     next: (result: any) => {
       const userOffline = result && result.data && result.data.userOffline;
-      userOffline && send("UserOffline", { data: userOffline });
+      userOffline && send({ type: "UserOffline", data: userOffline });
     },
     error: (e: any) => console.log("[User] Bad Sub: ", e),
     complete: () => console.log("Complete Sub"),
@@ -88,7 +88,7 @@ export const subscribeToUserBlocked = (
     next: (result: any) => {
       const userBlocked = result && result.data && result.data.userBlocked;
 
-      userBlocked && send("UserBlocked", { data: userBlocked.blockedBy });
+      userBlocked && send({ type: "UserBlocked", data: userBlocked.blockedBy });
     },
     error: (e: any) => console.log("[User] Bad Sub: ", e),
     complete: () => console.log("Complete Sub"),

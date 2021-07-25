@@ -12,8 +12,7 @@ export const actions: Action = {
   /* Core Actions */
   updateKernel: assign({
     kernel: (_, event) => {
-      console.log("chat:updateKernel: ", event.kernel);
-
+      console.log("[Chat] Received Updated Kernel");
       return event.kernel;
     },
   }),
@@ -67,5 +66,9 @@ export const actions: Action = {
       if (chat.userId !== userId) return;
       chat.ref.send({ type: "OPEN" });
     });
+  },
+
+  sendCloseUserList: ({ kernel }) => {
+    kernel && kernel.user.send({ type: "CLOSE_LIST" });
   },
 };

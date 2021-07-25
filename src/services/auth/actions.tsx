@@ -8,8 +8,7 @@ export const actions: Action = {
   /* Kernel Actions */
   updateKernel: assign({
     kernel: (_, event) => {
-      console.log("auth:updateKernel: ", event.kernel);
-
+      console.log("[Auth] Updating Kernel");
       return event.kernel;
     },
   }),
@@ -21,9 +20,9 @@ export const actions: Action = {
   updateUser: assign({ user: (_, e) => e.data }),
   updateToken: assign({ token: (_, e) => e.token }),
   updateError: assign({ error: (_, e) => e.data.message }),
-  logout: assign((_) => {
+  logout: assign(({ kernel }) => {
     localStorage && localStorage.clear(); // Clean user storage
-    return initialContext;
+    return { ...initialContext, kernel };
   }),
 
   /* Context Actions */

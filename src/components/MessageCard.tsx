@@ -10,9 +10,6 @@ interface Props {
 
 const MessageCard: FunctionComponent<Props> = ({ message, isUser }) => {
   const addressAs = isUser ? "You" : message.sentBy.name;
-  // const date = new Date(Number(message.sentAt));
-  const date = new Date();
-  const time = `${date.getHours()}:${date.getMinutes()}`;
 
   return (
     <Wrapper className={`MessageCard ${addressAs}`}>

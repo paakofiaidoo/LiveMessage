@@ -1,42 +1,43 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
-import { useChatContext } from "../services/chat";
+import { useKernelContext } from "../services/kernel";
 import { User } from "../types";
 import Avatar from "./Avatar";
 import Svg from "./Svg";
+import { anime, fadeIn, fadeOut } from "./anime";
 
 interface Props {
   user: User;
   isMe: boolean;
-  blockUser(): void;
+  isMinimized: boolean;
 }
 
-const UserCard: FunctionComponent<Props> = ({ user, isMe, blockUser }) => {
-  const [{ context }, send] = useChatContext();
+const UserCard: FunctionComponent<Props> = ({ user, isMe, isMinimized }) => {
+  const [{ context }, send] = useKernelContext().services.chat;
   const selected = context.selected === user.id ? "selected" : "";
+  const minimize = isMinimized ? "minimize" : "";
   const isOnline = user.status === "online";
-  const selectChat = () => send("CHAT.START", { userId: user.id });
+  const selectChat = () => send({ type: "CHAT.START", userId: user.id });
 
   return (
-    <Wrapper className={`UserCard ${selected}`}>
+    <Wrapper
+      className={`UserCard ${selected} ${minimize}`}
+      onClick={selectChat}
+    >
       <Avatar
         className={`image ${isOnline ? "active" : ""}`}
         src={user.image}
         alt={user.name + "'s profile picture"}
       />
       <h2>
-        {user.name}
+        {user.name} {isMe && "(You)"}
         <span>{user.email}</span>
         <span role="button" className="status">
           {user.status}
         </span>
       </h2>
 
-      <button
-        onClick={selectChat}
-        title={isMe ? "My Notes" : "Chat"}
-        className="chat-link"
-      >
+      <button title={isMe ? "My Notes" : "Chat"} className="chat-link">
         <Svg iconPath="/icons/sprite.svg#chat" />
       </button>
     </Wrapper>
@@ -51,6 +52,7 @@ const Wrapper = styled.div`
   align-items: center;
   padding: 1.5rem 2rem;
   transition: all 0.5s ease-in-out;
+  cursor: pointer;
 
   .image {
     margin-right: 1rem;
@@ -77,6 +79,10 @@ const Wrapper = styled.div`
 
   &:hover {
     background-color: var(--color-tertiary-light);
+
+    .chat-link svg {
+      transform: scale(1.3);
+    }
   }
 
   &.selected {
@@ -84,6 +90,15 @@ const Wrapper = styled.div`
 
     h2 {
       color: var(--color-primary);
+    }
+
+    .chat-link {
+      background-color: transparent;
+
+      svg {
+        transform: scale(1.3);
+        fill: var(--color-tertiary-light);
+      }
     }
   }
 
@@ -107,9 +122,17 @@ const Wrapper = styled.div`
       fill: var(--color-secondary);
       height: 1.5rem;
     }
+  }
 
-    &:hover {
-      transform: scale(1.2);
+  h2,
+  button {
+    ${anime({ name: fadeIn, duration: 0.3, delay: 0.3 })}
+  }
+
+  &.minimize {
+    h2,
+    button {
+      ${anime({ name: fadeOut, duration: 0.3 })}
     }
   }
 `;

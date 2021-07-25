@@ -1,6 +1,7 @@
 import { createMachine } from "xstate";
+import { createSend } from "../shared-actions";
 import { actions } from "./actions";
-import { Context } from "./types";
+import { ChatActor, Context } from "./types";
 
 export const initialContext: Context = {
   kernel: undefined,
@@ -24,7 +25,7 @@ export const createChatMachine = () =>
         "CHAT.ACTIVE": { actions: ["selectChat", "persist"] },
         "CHAT.COMMIT": { actions: ["commitChat", "persist"] },
         "CHAT.START": {
-          actions: ["startChat", "openChat", "persist"],
+          actions: ["startChat", "openChat", "sendCloseUserList", "persist"],
           cond: "hasUserId",
         },
         "CHAT.INCOMING_MESSAGE": { actions: "sendMessage", cond: "hasData" },
@@ -44,3 +45,7 @@ export const createChatMachine = () =>
   );
 
 export const initialMachine = createChatMachine();
+export const initialChatActor: ChatActor = [
+  initialMachine.initialState,
+  createSend(initialMachine.initialState.context),
+];

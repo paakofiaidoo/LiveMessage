@@ -37,3 +37,4 @@ export type Ref = ActorRefFrom<Machine>;
 export type ChatAction = ActionFunctionMap<ChatContext, AnyEventObject>;
 export type Action = ActionFunctionMap<Context, AnyEventObject>;
 export type ContextValue = [State<Context>, Send<Context>];
+export type ChatActor = [State<Context>, Send<Context>];

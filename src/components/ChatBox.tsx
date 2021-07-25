@@ -1,17 +1,29 @@
 import { useActor } from "@xstate/react";
-import React, { FunctionComponent, useEffect } from "react";
+import React, { FunctionComponent, RefObject, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Chat } from "../services/chat/types";
+import { useKernelContext } from "../services/kernel";
 import ChatBoxHeader from "./ChatBoxHeader";
 import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
 
 interface Props {
   chat: Chat;
+  scrollTo(position: Record<string, number>): void;
 }
 
-const ChatBox: FunctionComponent<Props> = ({ chat }) => {
+const ChatBox: FunctionComponent<Props> = ({ chat, scrollTo }) => {
+  const [chatState] = useKernelContext().services.chat;
   const [{ context }, send] = useActor(chat.ref);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Scroll To Chat
+  useEffect(() => {
+    if (chatState.context.selected !== chat.userId || !ref.current) return;
+
+    // scrollTo({ left: ref.current.offsetLeft });
+    scrollTo({ left: ref.current.offsetLeft - ref.current.offsetWidth });
+  }, [chatState.context.selected]);
 
   // Fetch Message
   useEffect(() => {
@@ -19,7 +31,7 @@ const ChatBox: FunctionComponent<Props> = ({ chat }) => {
   }, [context.isOpen]);
 
   return (
-    <Wrapper className={`ChatBox`}>
+    <Wrapper className={`ChatBox`} ref={ref}>
       <ChatBoxHeader chat={chat} />
       <MessageList messages={context.messages} />
       <MessageInput chatRef={chat.ref} />
@@ -35,49 +47,14 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   transition: all 0.5s ease-in-out;
-  flex-shrink: 0;
-  flex-grow: 0;
+  flex-shrink: 1;
+  flex-grow: 1;
 
-  width: 33rem;
   height: 100%;
   box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.12);
-`;
+  background-color: rgba(255, 255, 255, 0.8);
 
-const Header = styled.header`
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-  flex-grow: 0;
-
-  width: 100%;
-  height: 6rem;
-  padding: 1rem 2rem;
-
-  .image {
-    margin-right: 1rem;
-  }
-
-  h2 {
-    font-size: 1.2rem;
-  }
-
-  span {
-    display: block;
-    font-size: 1.2rem;
-    font-weight: normal;
-    color: var(--color-grey-light);
-  }
-
-  .block-user {
-    font-size: 1rem;
-    color: var(--color-tertiary);
-    cursor: pointer;
-    display: inline-block;
-
-    &:hover {
-      transform: scale(1.05);
-    }
+  > * {
+    min-width: 30rem;
   }
 `;

@@ -38,7 +38,7 @@ export const sendMessage = async (ctx: ChatContext) => {
   return sendMessage as Message;
 };
 
-export const subscribe = (
+export const subscribeToIncomingMessage = (
   client: SubscriptionClient,
   userId: string,
   send: Send<Context>

@@ -1,36 +1,45 @@
 import React, { FunctionComponent, useEffect } from "react";
 import styled from "styled-components";
-import { useAuthContext } from "../services/auth";
-import { useUserContext } from "../services/user";
+import { useKernelContext } from "../services/kernel";
+import { anime, fadeIn, fadeOut, softClose } from "./anime";
+import AppUser from "./AppUserCard";
+import MenuButton from "./MenuButton";
 import UserCard from "./UserCard";
 
 const UserList: FunctionComponent = () => {
-  const [{ context }, send] = useUserContext();
-  const [authState] = useAuthContext();
+  const { auth, user } = useKernelContext().services;
+  const [{ context }, send] = user;
+  const [authState] = auth;
   const appUser = authState.context.user;
   const userList = Object.values(context.users);
+
+  const toggleList = () => send("TOGGLE");
+
+  if (!appUser) return null;
 
   useEffect(() => {
     send("FetchUsers");
   }, []);
 
   return (
-    <Wrapper className="UserList">
+    <Wrapper className={`UserList ${!context.isOpen ? "minimize" : ""}`}>
       <header>
-        <h2>Users</h2>
-        <p>
-          Seemless interactions with other users and send messages to yourself
-          as notes
-        </p>
+        <MenuButton className="menu-button" onClick={toggleList} />{" "}
+        <h2>Live Message</h2>
       </header>
-      {userList.map((user, key) => (
-        <UserCard
-          key={key}
-          user={user}
-          isMe={(appUser && appUser.id) === user.id}
-          blockUser={() => send("BlockUser", { id: user.id })}
-        />
-      ))}
+      <div className="user-list">
+        {userList.map((user, key) => (
+          <UserCard
+            key={key}
+            user={user}
+            isMe={(appUser && appUser.id) === user.id}
+            isMinimized={!context.isOpen}
+          />
+        ))}
+      </div>
+      <footer>
+        <AppUser isMinimized={!context.isOpen} />
+      </footer>
     </Wrapper>
   );
 };
@@ -38,50 +47,62 @@ const UserList: FunctionComponent = () => {
 export default UserList;
 
 const Wrapper = styled.nav`
-  width: 30rem;
+  position: relative;
+  width: 8rem;
   height: 100%;
   box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.12);
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-primary);
+  overflow: hidden;
 
-  .user {
+  ${anime({
+    name: softClose("8rem", "30rem"),
+    duration: 0.3,
+  })}
+
+  > * {
+    width: 30rem;
+  }
+
+  > header {
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: 6rem;
     display: flex;
-    padding: 1.5rem 2rem;
-    transition: all 0.5s ease-in-out;
+    align-items: center;
+    padding: 0rem 2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
-    &:hover {
-      background-color: var(--color-tertiary-light);
-    }
-
-    &.selected {
-      background-color: var(--color-secondary);
-
-      h2 {
-        color: var(--color-primary);
-      }
+    h2 {
+      ${anime({ name: fadeIn, duration: 0.3, delay: 0.3 })}
     }
   }
 
-  .dp {
-    margin-right: 1rem;
+  > footer {
+    flex-grow: 0;
+    flex-shrink: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
   }
 
-  span {
-    display: block;
-    font-size: 1.2rem;
-    font-weight: normal;
-    color: var(--color-grey-light);
+  .user-list {
+    flex-grow: 1;
   }
 
-  .status {
-    font-size: 1rem;
-    color: var(--color-tertiary);
-  }
+  &.minimize {
+    ${anime({
+      name: softClose("30rem", "8rem"),
+      duration: 0.3,
+      delay: 0.3,
+    })}
 
-  header {
-    padding: 2rem;
-
-    p {
-      color: var(--color-grey-light);
+    header h2 {
+      ${anime({ name: fadeOut, duration: 0.3 })}
     }
+  }
+
+  @media (max-width: 672px) {
+    /* display: none; */
   }
 `;
