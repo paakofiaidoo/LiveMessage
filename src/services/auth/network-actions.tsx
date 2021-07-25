@@ -5,8 +5,6 @@ import { Context } from "./types";
 import jwt from "jsonwebtoken";
 
 export const login = async ({ token }: Context) => {
-  console.log("Logging: ", token);
-
   try {
     const client = createApolloClient();
     const {
@@ -16,8 +14,6 @@ export const login = async ({ token }: Context) => {
       mutation: LOGIN,
       variables: { token },
     });
-
-    console.log("Logged In: ", loginWithGoogle);
 
     // Report Error
     if (errors) throw Error("Oops! an error occured, please try again");
@@ -37,8 +33,6 @@ export const login = async ({ token }: Context) => {
 
     if (error)
       throw Error("Oops! could not get user profile, please try again");
-
-    console.log("Me: ", data.me);
 
     return data.me as User;
   } catch (e) {
