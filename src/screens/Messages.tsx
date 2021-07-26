@@ -31,7 +31,7 @@ const Wrapper = styled.div`
   border-radius: 0.4rem;
   margin: auto;
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; */
   box-shadow: 0px 1px 20px rgba(0, 0, 0, 0.16);
   flex-grow: 0;
   flex-shrink: 0;

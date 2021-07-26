@@ -40,12 +40,9 @@ const Wrapper = styled.div`
   flex-shrink: 1;
   flex-grow: 1;
 
+  width: 100%;
   height: 100%;
   box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.12);
   background-color: rgba(0, 0, 0, 0.1);
   background-color: var(--color-tertiary-light-1);
-
-  > * {
-    min-width: 30rem;
-  }
 `;

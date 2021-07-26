@@ -27,6 +27,7 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   flex-grow: 1;
+  flex-shrink: 1;
   display: flex;
   /* overflow: hidden; */
 
@@ -53,7 +54,7 @@ const Wrapper = styled.div`
 
   @media (max-width: 672px) {
     .no-chat {
-      padding: 3rem 5rem;
+      padding: 3rem 4rem;
     }
   }
 `;
