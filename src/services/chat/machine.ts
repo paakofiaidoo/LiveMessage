@@ -7,6 +7,7 @@ export const initialContext: Context = {
   kernel: undefined,
   chats: [],
   selected: null,
+  activeChat: undefined,
 };
 
 export const createChatMachine = () =>
@@ -19,13 +20,21 @@ export const createChatMachine = () =>
         UPDATE: { actions: ["updateKernel"] },
 
         /* Store Events */
-        LOAD_CONTEXT: { actions: ["loadContext", "rehydateChats"] },
+        LOAD_CONTEXT: {
+          actions: ["loadContext", "rehydateChats", "setActiveChat"],
+        },
 
         /* Chat Events */
         "CHAT.ACTIVE": { actions: ["selectChat", "persist"] },
         "CHAT.COMMIT": { actions: ["commitChat", "persist"] },
         "CHAT.START": {
-          actions: ["startChat", "openChat", "sendCloseUserList", "persist"],
+          actions: [
+            "startChat",
+            "openChat",
+            "setActiveChat",
+            "sendCloseUserList",
+            "persist",
+          ],
           cond: "hasUserId",
         },
         "CHAT.INCOMING_MESSAGE": { actions: "sendMessage", cond: "hasData" },

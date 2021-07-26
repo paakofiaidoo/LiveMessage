@@ -6,8 +6,8 @@ import {
   StateMachine,
 } from "xstate";
 import { Send } from "../shared-actions";
-import { Message } from "../../types";
 import { Context as KernelContext } from "../kernel/types";
+import { Message } from "../message/types";
 
 export interface ChatContext {
   isOpen: boolean;
@@ -15,7 +15,6 @@ export interface ChatContext {
   messages: Message[];
   message: string;
   fetchError: string | null;
-  sendError: string | null;
 }
 
 export interface Chat extends ChatContext {
@@ -26,6 +25,7 @@ export interface Context {
   kernel: KernelContext | undefined;
   chats: Chat[];
   selected: string | null;
+  activeChat: Chat | undefined;
 }
 
 type SM<T> = StateMachine<T, any, AnyEventObject>;

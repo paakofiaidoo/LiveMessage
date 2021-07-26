@@ -3,10 +3,12 @@ import { setContext } from "@apollo/client/link/context";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 
 export const AUTH_TOKEN_KEY = `bm8za`;
-const BASE_ADDRESS = `livemessage-server.herokuapp.com`;
-// const BASE_ADDRESS = `localhost:4000`;
-const URL = `https://${BASE_ADDRESS}`;
-const WS_URL = `wss://${BASE_ADDRESS}/subscriptions`;
+
+const URL = `https://livemessage-server.herokuapp.com`;
+const WS_URL = `wss://livemessage-server.herokuapp.com/subscriptions`;
+
+// const URL = `http://localhost:4000`;
+// const WS_URL = `ws://localhost:4000/subscriptions`;
 
 /** WebSocket Client */
 export const createWebSocketClient = () => {

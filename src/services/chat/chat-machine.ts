@@ -1,6 +1,6 @@
 import { createMachine } from "xstate";
 import { actions } from "./chat-actions";
-import { findMessage, sendMessage } from "./network-actions";
+import { findMessage } from "./network-actions";
 import { ChatContext } from "./types";
 
 export const createChatContext = (userId: string): ChatContext => {
@@ -10,7 +10,6 @@ export const createChatContext = (userId: string): ChatContext => {
     messages: [],
     message: "",
     fetchError: null,
-    sendError: null,
   };
 };
 
@@ -21,6 +20,19 @@ export const createChatMachine = (context: ChatContext) =>
       context,
       type: "parallel",
       states: {
+        /* Hydrate Messages */
+        hydrate: {
+          id: "hydrateMessages",
+          initial: "hydrating",
+          states: {
+            hydrating: {
+              entry: "rehydateMessages",
+              always: "rehydated",
+            },
+            rehydated: {},
+          },
+        },
+
         /* Fetch Messages */
         fetch: {
           initial: "idle",
@@ -45,41 +57,15 @@ export const createChatMachine = (context: ChatContext) =>
             },
           },
         },
-
-        /* Send Message */
-        send: {
-          initial: "idle",
-          states: {
-            idle: {
-              on: {
-                SEND: {
-                  target: "sending",
-                  cond: (ctx) => !!ctx.message && !!ctx.userId,
-                },
-              },
-            },
-            sending: {
-              id: "sendMessage",
-              invoke: {
-                src: sendMessage,
-                onDone: {
-                  target: "idle",
-                  actions: ["attachIncomingMessage", "clearMessage", "commit"],
-                },
-                onError: {
-                  target: "sendError",
-                  actions: ["updateSendError", "commit"],
-                },
-              },
-            },
-            sendError: { on: { SEND: { target: "sending" } } },
-          },
-        },
       },
 
       on: {
+        "MESSAGE.COMMIT": { actions: ["commitMessage", "commit"] },
         CHANGE: { actions: ["updateMessage", "commit"] },
-        SEND: { target: "send.sending", cond: (ctx) => !!ctx.message },
+        SEND: {
+          actions: ["createNewMessage", "clearMessage", "commit"],
+          cond: (ctx) => !!ctx.message,
+        },
         CLOSE: { actions: ["close", "commit"] },
         OPEN: { actions: ["open", "commit"] },
         INCOMING_MESSAGE: { actions: ["attachIncomingMessage", "commit"] },

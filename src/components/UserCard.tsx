@@ -72,7 +72,7 @@ const Wrapper = styled.div`
 
   .status {
     font-size: 1rem;
-    color: var(--color-tertiary);
+    color: var(--color-terit);
     cursor: pointer;
     display: inline-block;
   }
@@ -134,5 +134,16 @@ const Wrapper = styled.div`
     button {
       ${anime({ name: fadeOut, duration: 0.3 })}
     }
+  }
+
+  @media (max-width: 672px) {
+    padding: 1.5rem 1rem;
+
+    .image {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+
+   
   }
 `;

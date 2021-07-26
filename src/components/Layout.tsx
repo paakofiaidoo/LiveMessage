@@ -3,12 +3,7 @@ import styled from "styled-components";
 import Navbar from "./Navbar";
 
 const Layout: FunctionComponent = ({ children }) => {
-  return (
-    <Wrapper className="Layout">
-      {/* <Navbar /> */}
-      <main> {children} </main>
-    </Wrapper>
-  );
+  return <Wrapper className="Layout">{children}</Wrapper>;
 };
 
 export default Layout;
@@ -18,12 +13,4 @@ const Wrapper = styled.div`
   height: 100vh;
   position: relative;
   display: flex;
-
-  /* background-color: rgba(255, 255, 255, 0.8); */
-
-  main {
-    flex-grow: 1;
-    flex-shrink: 1;
-    overflow: hidden;
-  }
 `;

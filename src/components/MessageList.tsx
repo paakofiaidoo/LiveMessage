@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useKernelContext } from "../services/kernel";
-import { Message } from "../types";
+import { Message } from "../services/message/types";
 import MessageCard from "./MessageCard";
 
 interface Props {
@@ -9,9 +9,13 @@ interface Props {
 }
 
 const MessageList: FunctionComponent<Props> = ({ messages }) => {
-  const [{ context }] = useKernelContext().services.auth;
+  const services = useKernelContext().services;
+  const [{ context }] = services.auth;
+  const [userState] = services.user;
   const user = context.user;
   const ref = useRef<HTMLDivElement>(null);
+
+  if (!user) return null;
 
   useEffect(() => {
     // Ref
@@ -22,13 +26,21 @@ const MessageList: FunctionComponent<Props> = ({ messages }) => {
 
   return (
     <Wrapper className="MessageList" ref={ref}>
-      {messages.map((msg, key) => (
-        <MessageCard
-          key={key}
-          message={msg}
-          isUser={msg.sentBy.id === (user && user.id)}
-        />
-      ))}
+      {messages.map((msg, key) => {
+        const isSentByUser = msg.sentBy === user.id;
+        const sentBy = isSentByUser
+          ? user
+          : userState.context.users[msg.sentBy];
+
+        return (
+          <MessageCard
+            key={key}
+            message={msg}
+            sentBy={sentBy}
+            isUser={isSentByUser}
+          />
+        );
+      })}
     </Wrapper>
   );
 };
@@ -40,7 +52,10 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   flex-grow: 1;
+  overflow-x: hidden;
   overflow-y: auto;
+  position: relative;
+  padding: 1rem 0rem;
 
   .message {
     margin-bottom: 2rem;

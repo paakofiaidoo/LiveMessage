@@ -4,17 +4,14 @@ import { useKernelContext } from "../services/kernel";
 import { fadeDown } from "./anime";
 import ChatBox from "./ChatBox";
 
-const ChatList: FunctionComponent = () => {
+const SingleChat: FunctionComponent = () => {
   const [{ context }] = useKernelContext().services.chat;
-  const openChats = context.chats.filter((chat) => chat.isOpen);
+  const activeChat = context.activeChat;
 
   return (
-    <Wrapper className="ChatList">
-      {openChats.map((chat, key) => (
-        <ChatBox key={key} chat={chat} />
-      ))}
-
-      {openChats.length === 0 && (
+    <Wrapper className="SingleChat">
+      {activeChat && <ChatBox chat={activeChat} />}
+      {!activeChat && (
         <div className="no-chat">
           <h2>Hello</h2>
           <p>Enjoy seemless interactions with anyone and everyone</p>
@@ -24,14 +21,14 @@ const ChatList: FunctionComponent = () => {
   );
 };
 
-export default ChatList;
+export default SingleChat;
 
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   flex-grow: 1;
   display: flex;
-  overflow-x: auto;
+  /* overflow: hidden; */
 
   .no-chat {
     min-width: 100%;

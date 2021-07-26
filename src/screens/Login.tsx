@@ -16,7 +16,7 @@ const Login: FunctionComponent = () => {
   return (
     <Wrapper className="Login">
       <h1>Live Message </h1>
-      <p>with Multi-Windows</p>
+      <p>connect with others</p>
 
       <GoogleLogin
         className="login-button"

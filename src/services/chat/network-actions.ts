@@ -2,7 +2,7 @@ import { SubscriptionClient } from "subscriptions-transport-ws";
 import { Message } from "../../types";
 import { createApolloClient } from "../../utils/apollo";
 import { Send } from "../shared-actions";
-import { MESSAGES, SEND_MESSAGE, SUBSCRIPTION } from "./graphql";
+import { MESSAGES, SUBSCRIPTION } from "./graphql";
 import { ChatContext, Context } from "./types";
 
 export const findMessage = async (ctx: ChatContext) => {
@@ -14,28 +14,6 @@ export const findMessage = async (ctx: ChatContext) => {
   if (error) throw Error("Oops! an error occured, please try again");
 
   return (data.messages as Message[]) || ([] as Message[]);
-};
-
-export const sendMessage = async (ctx: ChatContext) => {
-  const client = createApolloClient();
-  const {
-    data: { sendMessage },
-    errors,
-  } = await client.mutate({
-    mutation: SEND_MESSAGE,
-    variables: {
-      sendInput: {
-        sentTo: ctx.userId,
-        content: ctx.message.trim(),
-        sentAt: new Date(),
-      },
-    },
-  });
-
-  // Report Error
-  if (errors) throw Error("Oops! could not send message, please try again");
-
-  return sendMessage as Message;
 };
 
 export const subscribeToIncomingMessage = (
