@@ -57,6 +57,8 @@ const Wrapper = styled.nav`
   background-color: var(--color-primary);
   overflow: hidden;
 
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+
   ${anime({
     name: softClose("8rem", "30rem"),
     duration: 0.3,
@@ -103,6 +105,26 @@ const Wrapper = styled.nav`
   }
 
   @media (max-width: 672px) {
-    /* display: none; */
+    width: 6rem;
+    ${anime({
+      name: softClose("6rem", "30rem"),
+      duration: 0.3,
+    })}
+
+    &.minimize {
+      ${anime({
+        name: softClose("30rem", "6rem"),
+        duration: 0.3,
+        delay: 0.3,
+      })}
+
+      header h2 {
+        ${anime({ name: fadeOut, duration: 0.3 })}
+      }
+    }
+
+    header {
+      padding: 0rem 1rem;
+    }
   }
 `;

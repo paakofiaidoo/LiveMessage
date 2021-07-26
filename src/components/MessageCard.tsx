@@ -1,29 +1,23 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
-import { Message } from "../types";
+import { Message } from "../services/message/types";
+import { User } from "../types";
+import { anime, fadeIn } from "./anime";
 import Avatar from "./Avatar";
 
 interface Props {
   message: Message;
+  sentBy: User;
   isUser?: boolean;
 }
 
-const MessageCard: FunctionComponent<Props> = ({ message, isUser }) => {
-  const addressAs = isUser ? "You" : message.sentBy.name;
+const MessageCard: FunctionComponent<Props> = ({ sentBy, message, isUser }) => {
+  const addressAs = isUser ? "You" : sentBy.name;
 
   return (
     <Wrapper className={`MessageCard ${addressAs}`}>
-      <Avatar
-        className="xsmall dp"
-        src={message.sentBy.image}
-        alt={message.sentBy.name + "'s profile picture"}
-      />
-
       <div className="content">
-        <h2>
-          {addressAs}
-          <span>{message.sentBy.email}</span>
-        </h2>
+        <h2>{addressAs}</h2>
         <p>{message.content}</p>
       </div>
     </Wrapper>
@@ -33,39 +27,41 @@ const MessageCard: FunctionComponent<Props> = ({ message, isUser }) => {
 export default MessageCard;
 
 const Wrapper = styled.article`
-  padding: 2rem;
+  padding: 0.1rem 2rem;
   display: flex;
   margin-bottom: 0.5rem;
   height: auto;
   width: 100%;
+  position: relative;
 
-  &:not(:last-child) {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .dp {
-    margin-right: 1rem;
-    flex-grow: 0;
-    flex-shrink: 0;
-  }
+  ${anime({ name: fadeIn, duration: 0.5 })}
 
   .content {
-    flex-grow: 1;
     border-radius: 0.4rem;
+    flex-grow: 0;
+    width: auto;
+    min-width: 5rem;
+    max-width: 50rem;
+    background-color: var(--color-primary);
+    padding: 1rem;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.16);
 
     h2 {
-      display: block;
-      font-size: 1.2rem;
       line-height: 1.15;
-      margin-bottom: 1rem;
-      color: var(--color-secondary);
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      font-weight: normal;
+      color: var(--color-grey-light);
+    }
+  }
 
-      span {
-        display: block;
-        font-size: 1.2rem;
-        font-weight: normal;
-        color: var(--color-grey-light);
-      }
+  &.You {
+    flex-direction: row-reverse;
+  }
+
+  @media (max-width: 672px) {
+    .content {
+      max-width: 90%;
     }
   }
 `;

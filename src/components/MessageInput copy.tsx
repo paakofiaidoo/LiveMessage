@@ -21,18 +21,16 @@ const MessageInput: FunctionComponent<Props> = ({ chatRef }) => {
 
   return (
     <Wrapper className="message-input">
-      <div className="input">
-        <textarea
-          autoFocus
-          name="message"
-          placeholder="Enter your reply here..."
-          onChange={(e) => send({ type: "CHANGE", value: e.target.value })}
-          value={context.message}
-        ></textarea>
-        <button title="Send" onClick={sendMessage}>
-          <Svg iconPath="/icons/sprite.svg#send" />
-        </button>
-      </div>
+      <textarea
+        autoFocus
+        name="message"
+        placeholder="Enter your reply here..."
+        onChange={(e) => send({ type: "CHANGE", value: e.target.value })}
+        value={context.message}
+      ></textarea>
+      <button title="Send" onClick={sendMessage}>
+        <Svg iconPath="/icons/sprite.svg#send" />
+      </button>
     </Wrapper>
   );
 };
@@ -42,28 +40,20 @@ export default MessageInput;
 const Wrapper = styled.div`
   width: 100%;
   height: 9rem;
+  display: flex;
   flex-grow: 0;
   padding: 1rem 2rem 2rem 2rem;
-  position: relative;
-
-  .input {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    border-radius: 0.6rem;
-    border: 0.2rem solid #dbdcde;
-    overflow: hidden;
-  }
 
   textarea {
     height: 100%;
     padding: 1rem;
+    border-radius: 0.6rem;
+    border: 0.2rem solid #dbdcde;
     margin-bottom: 1rem;
     outline: none;
     resize: none;
     font-family: inherit;
     flex-grow: 1;
-    border: none;
   }
 
   textarea:focus {

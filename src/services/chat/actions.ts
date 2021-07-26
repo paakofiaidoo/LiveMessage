@@ -48,8 +48,26 @@ export const actions: Action = {
     },
   }),
 
+  // startChat: assign((context, { userId }) => {
+  //   const chats = context.chats;
+
+  //   // Prevent duplicate
+  //   if (chats.find((c) => c.userId === userId)) {
+  //     return { ...context, chats };
+  //   }
+
+  //   const chatContext = createChatContext(userId);
+  //   const machine = createChatMachine(chatContext);
+
+  //   return {
+  //     ...context,
+  //     chats: [{ ...chatContext, ref: spawn(machine) }, ...chats],
+  //   };
+  // }),
+
   selectChat: assign({ selected: (_, { userId }) => userId }),
   removeChat: assign({
+    activeChat: (_) => undefined,
     chats: ({ chats }, { userId }) =>
       chats.filter((chat) => chat.userId !== userId),
   }),
@@ -67,6 +85,11 @@ export const actions: Action = {
       chat.ref.send({ type: "OPEN" });
     });
   },
+
+  setActiveChat: assign({
+    activeChat: ({ chats, selected }) =>
+      chats.find((chat) => chat.userId === selected),
+  }),
 
   sendCloseUserList: ({ kernel }) => {
     kernel && kernel.user.send({ type: "CLOSE_LIST" });

@@ -117,4 +117,19 @@ const Wrapper = styled.div`
       ${anime({ name: fadeOut, duration: 0.3 })}
     }
   }
+
+  @media (max-width: 672px) {
+    .user {
+      padding: 1.5rem 1rem;
+    }
+
+    .actions button {
+      padding: 2rem 1rem;
+    }
+
+    .image {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+  }
 `;

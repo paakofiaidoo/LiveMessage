@@ -63,6 +63,7 @@ const Wrapper = styled.header`
   flex-grow: 0;
   width: 100%;
   border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  background-color: var(--color-primary);
 
   .header {
     display: flex;
@@ -136,9 +137,9 @@ const Menu: FunctionComponent<MenuProps> = ({
           </div>
         </div>
       )}
-      <a role="button" className={`item`} onClick={closeChat}>
+      {/* <a role="button" className={`item`} onClick={closeChat}>
         <span className="label">Close Chat</span>
-      </a>
+      </a> */}
     </MenuWrapper>
   );
 };
@@ -154,6 +155,7 @@ const MenuWrapper = styled.button`
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.16);
   background-color: var(--color-primary);
   text-align: left;
+  z-index: +1;
 
   .item {
     cursor: pointer;
